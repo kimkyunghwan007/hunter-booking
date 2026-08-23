@@ -1,0 +1,48 @@
+
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>거북섬 마리나 헌터호</title><link rel="stylesheet" href="/static/style.css"></head><body>
+<header class="hero">
+  <div class="overlay">
+    <div class="brand">거북섬 마리나<br><strong>헌터호</strong></div>
+    <div class="heroText"><p>시화호에서 즐기는 특별한 마리나 체험</p><h1>주간 · 야간 · 선셋</h1><a href="#reserve" class="gold">지금 예약하기</a></div>
+  </div>
+</header>
+
+<main>
+{% with messages = get_flashed_messages() %}
+{% if messages %}<div class="flash">{{ messages[0] }}</div>{% endif %}
+{% endwith %}
+
+<section><h2>체험 프로그램</h2>
+  <div class="card"><h3>☀️ 주간체험</h3><p>1인 100,000원</p><p>쭈꾸미 · 갑오징어 등 시즌 체험</p></div>
+  <div class="card"><h3>🌙 야간체험</h3><p>1인 80,000원</p><p>꽃게 · 장어 등 시즌 체험</p></div>
+  <div class="card sunset"><h3>🌅 선셋체험</h3><p>4인 기준 250,000원</p><p>거북섬의 노을과 마리나 경관을 선상에서 즐기는 체험</p></div>
+</section>
+
+<section id="reserve"><h2>예약하기</h2>
+<form method="post" action="/reserve" class="card form">
+<label>체험 선택</label>
+<select name="program" id="program" onchange="checkAvail()">
+<option>주간체험</option><option>야간체험</option><option>선셋체험</option>
+</select>
+<label>날짜</label><input type="date" name="date" id="date" required onchange="checkAvail()">
+<div id="avail" class="availability">날짜를 선택하면 잔여인원이 표시됩니다.</div>
+<label>인원</label><input type="number" min="1" max="8" value="1" name="people" required>
+<label>예약자 이름</label><input name="name" required>
+<label>휴대전화</label><input name="phone" inputmode="tel" required>
+<button class="gold" type="submit">예약 신청하기</button>
+</form></section>
+
+<section><h2>헌터호 안내</h2><div class="infoGrid"><div>🛡<b>안전장비</b></div><div>👥<b>9인승 선박</b></div><div>📍<b>거북섬 출항</b></div><div>🌅<b>다양한 체험</b></div></div></section>
+</main>
+<nav class="bottom"><a href="tel:01020030359">전화문의</a><a href="sms:01020030359">문자문의</a><a href="#reserve">예약하기</a></nav>
+<script>
+document.getElementById('date').min = new Date().toISOString().split('T')[0];
+async function checkAvail(){
+ const p=document.getElementById('program').value, d=document.getElementById('date').value;
+ if(!d) return;
+ const r=await fetch('/api/availability?program='+encodeURIComponent(p)+'&date='+encodeURIComponent(d));
+ const j=await r.json();
+ document.getElementById('avail').textContent = j.state==='예약가능' ? '현재 잔여 '+j.remaining+'명' : j.state;
+}
+</script></body></html>

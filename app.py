@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import os
 import psycopg
@@ -53,7 +52,7 @@ def init_db():
 
 def get_schedule(program, date):
     con = db()
-    row = con.execute("SELECT * FROM schedule WHERE program=? AND date=?", (program, date)).fetchone()
+    row = con.execute("SELECT * FROM schedule WHERE program=%s AND date=%s", (program, date)).fetchone()
     con.close()
     if row:
         return dict(row)
@@ -64,7 +63,7 @@ def booked_people(program, date):
     row = con.execute("""
         SELECT COALESCE(SUM(people),0) AS total
         FROM bookings
-        WHERE program=? AND date=? AND status IN ('예약접수','예약확정')
+        WHERE program=%s AND date=%s AND status IN ('예약접수','예약확정')
     """, (program, date)).fetchone()
     con.close()
     return int(row["total"])
@@ -152,7 +151,7 @@ def set_booking_status(bid, status):
     if status not in ("예약접수","예약확정","취소"):
         return "invalid", 400
     con = db()
-    con.execute("UPDATE bookings SET status=? WHERE id=?", (status, bid))
+    con.execute("UPDATE bookings SET status=%s WHERE id=%s", (status, bid))
     con.commit()
     con.close()
     return redirect(url_for("admin"))
@@ -171,7 +170,7 @@ def set_schedule():
     con = db()
     con.execute("""
         INSERT INTO schedule(program,date,capacity,state)
-        VALUES(?,?,?,?)
+        VALUES(%s,%s,%s,%s)
         ON CONFLICT(program,date) DO UPDATE SET capacity=excluded.capacity,state=excluded.state
     """, (program,date,capacity,state))
     con.commit()
@@ -182,4 +181,4 @@ def set_schedule():
 init_db()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

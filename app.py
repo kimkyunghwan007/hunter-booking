@@ -111,7 +111,7 @@ def reserve():
     con = db()
     con.execute("""
         INSERT INTO bookings(program,date,people,name,phone,status,created_at)
-        VALUES(?,?,?,?,?,'예약접수',?)
+        VALUES(%s,%s,%s,%s,%s,'예약접수',%s)
     """, (program, date, people, name, phone, datetime.now().isoformat(timespec="seconds")))
     con.commit()
     con.close()

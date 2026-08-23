@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>헌터호 관리자</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="adminBg">
+
+<header class="adminHeader">
+<b>⚓ 헌터호 관리자</b>
+<a href="/admin/logout">로그아웃</a>
+</header>
+
+<main>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="flash">{{messages[0]}}</div>
+{% endif %}
+{% endwith %}
+
+<section>
+<h2>날짜별 운항 설정</h2>
+
+<form method="post" action="/admin/schedule" class="card form">
+
+<label>체험</label>
+<select name="program">
+<option>주간체험</option>
+<option>야간체험</option>
+<option>선셋체험</option>
+</select>
+
+<label>날짜</label>
+<input type="date" name="date" required>
+
+<label>정원</label>
+<input type="number" name="capacity" value="8" min="1" max="9">
+
+<label>상태</label>
+<select name="state">
+<option>예약가능</option>
+<option>예약마감</option>
+<option>운항없음</option>
+</select>
+
+<button class="gold">저장</button>
+
+</form>
+</section>
+
+
+<section>
+<h2>예약자 명단</h2>
+
+{% if bookings %}
+
+{% for b in bookings %}
+
+<div class="card booking">
+
+<b>{{b.date}} · {{b.program}}</b><br>
+{{b.name}} · {{b.people}}명 · {{b.phone}}<br>
+
+<span class="status">{{b.status}}</span>
+
+<div class="actions">
+
+<form method="post" action="/admin/booking/{{b.id}}/예약확정">
+<button>예약확정</button>
+</form>
+
+<form method="post" action="/admin/booking/{{b.id}}/취소">
+<button class="muted">취소</button>
+</form>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="card">아직 접수된 예약이 없습니다.</div>
+
+{% endif %}
+
+</section>
+
+
+<section>
+<h2>설정된 운항일</h2>
+
+{% if schedules %}
+
+{% for s in schedules %}
+
+<div class="card">
+<b>{{s.date}} · {{s.program}}</b><br>
+정원 {{s.capacity}}명 · {{s.state}}
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="card">별도 설정된 운항일이 없습니다.</div>
+
+{% endif %}
+
+</section>
+
+</main>
+
+</body>
+</html>

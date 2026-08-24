@@ -48,6 +48,9 @@ def total_price(program,people): return PROGRAMS[program]['price'] if program=='
 
 @app.route('/hunter-main.png')
 def image(): return send_from_directory(app.root_path,'hunter-main-1.png')
+@app.route("/parking.png")
+def parking_image():
+    return send_from_directory(app.root_path, "parking.png")
 @app.route('/')
 def home(): return render_template('index.html',programs=PROGRAMS,bank_name=BANK_NAME,bank_account=BANK_ACCOUNT,bank_holder=BANK_HOLDER)
 @app.route('/api/availability')

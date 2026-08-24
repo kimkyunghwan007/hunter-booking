@@ -52,6 +52,51 @@ def send_admin_sms(program, date, people, name, phone):
     except Exception as e:
         print(f"예약 알림 문자 발송 실패: {e}")
 
+
+def send_customer_status_sms(phone, program, date, status):
+    """예약 확정/취소 시 예약자에게 문자 알림을 보냅니다."""
+    if not all([SOLAPI_API_KEY, SOLAPI_API_SECRET, SOLAPI_FROM]):
+        print("SOLAPI 고객 문자 설정 누락")
+        return
+
+    phone = (phone or "").replace("-", "").strip()
+    if not phone:
+        print("고객 전화번호가 없어 문자 발송 생략")
+        return
+
+    if status == "예약확정":
+        text = (
+            "[헌터호 예약확정]\n"
+            f"{date} {program}\n"
+            "예약이 확정되었습니다.\n"
+            "감사합니다."
+        )
+    elif status == "취소":
+        text = (
+            "[헌터호 예약취소]\n"
+            f"{date} {program}\n"
+            "예약이 취소되었습니다.\n"
+            "문의사항은 연락 부탁드립니다."
+        )
+    else:
+        return
+
+    try:
+        message_service = SolapiMessageService(
+            api_key=SOLAPI_API_KEY,
+            api_secret=SOLAPI_API_SECRET,
+        )
+        message = RequestMessage(
+            from_=SOLAPI_FROM,
+            to=phone,
+            text=text,
+        )
+        message_service.send(message)
+        print(f"고객 {status} 문자 발송 성공")
+    except Exception as e:
+        # 문자 실패가 관리자 페이지 동작을 막지 않게 합니다.
+        print(f"고객 {status} 문자 발송 실패: {e}")
+
 def db():
     url = os.environ.get("DATABASE_URL")
     if not url:
@@ -216,15 +261,40 @@ def admin():
 def set_booking_status(bid, status):
     if not require_admin():
         return redirect(url_for("admin_login"))
+
     if status not in ("예약접수", "예약확정", "취소"):
         return "invalid", 400
+
     con = db()
+
+    booking = con.execute(
+        "SELECT * FROM bookings WHERE id=%s",
+        (bid,),
+    ).fetchone()
+
+    if not booking:
+        con.close()
+        flash("예약 정보를 찾을 수 없습니다.")
+        return redirect(url_for("admin"))
+
+    old_status = booking["status"]
+
     con.execute(
         "UPDATE bookings SET status=%s WHERE id=%s",
         (status, bid),
     )
     con.commit()
     con.close()
+
+    # 같은 상태 버튼을 반복해서 눌렀을 때 중복 문자를 보내지 않습니다.
+    if status != old_status and status in ("예약확정", "취소"):
+        send_customer_status_sms(
+            booking["phone"],
+            booking["program"],
+            booking["date"],
+            status,
+        )
+
     return redirect(url_for("admin"))
 
 @app.route("/admin/schedule", methods=["POST"])

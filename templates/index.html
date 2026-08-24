@@ -13,6 +13,7 @@ main{max-width:680px;margin:auto;padding:18px}.title{font-size:22px;margin:18px 
 label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;padding:14px;border:1px solid #d5dde6;border-radius:12px;font-size:16px;background:white}.remaining{margin:10px 0;padding:12px;border-radius:11px;background:#edf6fd;color:#0a578c;font-weight:800}.submit{width:100%;border:0;background:#0a3c62;color:white;padding:17px;border-radius:13px;font-size:17px;font-weight:900;margin-top:14px}
 .privacy{margin-top:15px;padding:13px;background:#f6f8fa;border-radius:12px;font-size:12px;line-height:1.6;color:#536171}.agree{display:flex;gap:8px;align-items:flex-start;font-size:14px}.agree input{width:20px;height:20px;margin:0;flex:none}
 .calhead{display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px}.calhead button{border:0;background:#eef3f7;border-radius:10px;padding:10px 14px;font-size:19px}.calmonth{font-weight:900;font-size:19px}.week,.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.week div{text-align:center;font-size:12px;color:#7b8794;font-weight:800}.day{min-height:67px;border:1px solid #e1e7ed;border-radius:10px;padding:6px 2px;text-align:center;background:white}.blank{border:0;background:transparent}.dnum{font-weight:900}.dstate{font-size:10px;margin-top:5px;font-weight:800}.available .dstate{color:#13854b}.low .dstate{color:#d27a00}.closed .dstate{color:#c53b3b}.past{opacity:.35}.selected{border:2px solid #0a578c;background:#edf6fd}
+.infoBox{margin-top:12px;border-radius:14px;padding:15px;background:#f7fbff;border:1px solid #dcebf6;line-height:1.7}.infoBox h3{margin:0 0 8px;font-size:18px}.infoGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.infoChip{background:white;border-radius:10px;padding:10px;font-size:13px;border:1px solid #e8eef3}.infoChip b{display:block;color:#0a4d7d;margin-bottom:3px}.infoNote{font-size:12px;color:#6b7785;margin-top:9px}
 .bottom{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:white;border-top:1px solid #dde4ea}.bottom a{text-align:center;padding:12px 3px;font-size:12px;font-weight:900}.reserve{background:#0a3c62!important;color:white!important}
 </style>
 </head>
@@ -21,6 +22,7 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
 <img src="/hunter-main.png" alt="헌터호">
 <div class="heroText"><div>거북섬 마리나 · HUNTER BOAT</div><h1>⚓ 헌터호</h1><p>가까운 바다에서 즐기는 특별한 하루</p><a class="cta" href="#reserve">예약 가능일 확인하기</a></div>
 </header>
+
 <main>
 <h2 class="title">체험 프로그램</h2>
 <div class="card program"><div><h3>☀️ 주간체험</h3><p>쭈꾸미 · 갑오징어 체험</p></div><div class="price">100,000원<small>1인</small></div></div>
@@ -35,11 +37,15 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
 <section id="reserve">
 <h2 class="title">예약 가능 달력</h2>
 <p class="sub">체험을 선택하면 날짜별 빈자리가 표시됩니다.</p>
+
 <div class="card">
 <label>체험 선택</label>
 <select id="program">
 {% for name, info in programs.items() %}<option value="{{ name }}">{{ name }}</option>{% endfor %}
 </select>
+
+<div id="programInfo" class="infoBox"></div>
+
 <div class="calhead"><button type="button" id="prev">‹</button><div class="calmonth" id="monthTitle"></div><button type="button" id="next">›</button></div>
 <div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
 <div class="calendar" id="calendar"></div>
@@ -55,11 +61,13 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
 <label>예약 인원</label><input id="people" name="people" type="number" min="1" value="1" required>
 <label>예약자 이름</label><input name="name" type="text" required>
 <label>휴대전화번호</label><input name="phone" type="tel" inputmode="numeric" placeholder="01012345678" required>
+
 <label>입금 방법</label>
 <select name="payment_type" id="paymentType" required>
 <option value="5만원 선입금">예약금 50,000원 선입금</option>
 <option value="전액 입금">예약금 전액 입금</option>
 </select>
+
 <div style="margin-top:12px;padding:14px;background:#fff8e8;border:1px solid #f1d48d;border-radius:12px">
 <b>입금하실 금액</b><div id="payAmount" style="font-size:22px;font-weight:900;color:#a56200;margin:7px 0">50,000원</div>
 <b>{{bank_name}} {{bank_account}}</b><br>예금주 {{bank_holder}}
@@ -68,15 +76,13 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
 <strong>입금 시 날짜 + 예약자명으로 입금해주세요.</strong><br>
 예) 8월25일 김경환
 </div></div>
+
 <div class="privacy"><b>개인정보 수집·이용 안내</b><br>수집항목: 이름, 휴대전화번호, 예약일, 체험 종류, 인원<br>이용목적: 예약 접수·확정·취소 안내 및 예약 관리</div>
 <label class="agree"><input type="checkbox" required><span>개인정보 수집·이용에 동의합니다. (필수)</span></label>
 <button class="submit" type="submit">예약 신청하기</button>
 </form>
 </div>
 </section>
-</main>
-
-
 
 <section id="directions" style="margin-top:32px;">
   <h2>📍 오시는 길 · 무료 주차장 안내</h2>
@@ -86,10 +92,10 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
       무료 주차장 : 거북섬로 111<br>
       주차 후 안내 경로를 따라 거북섬 마리나로 이동해주세요.
     </div>
-    <img src="/parking.png" alt="거북섬 마리나 무료 주차장 안내"
-         style="display:block; width:100%; height:auto; border-radius:14px;">
+    <img src="/parking.png" alt="거북섬 마리나 무료 주차장 안내" style="display:block; width:100%; height:auto; border-radius:14px;">
   </div>
 </section>
+</main>
 
 <footer style="margin-top:40px; padding:25px 15px; background:#f5f5f5; color:#666; font-size:13px; line-height:1.8; text-align:center;">
   <div><strong>헌터호</strong></div>
@@ -97,7 +103,6 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
   <div>사업자등록번호 : 158-36-01705</div>
   <div>주소 : 경기도 안산시 상록구 구룡로5길 14-4 204호</div>
   <div>예약문의 : 010-2003-0359</div>
-
   <div style="margin-top:15px; padding:12px; background:#fff; border-radius:10px; color:#666;">
     <strong>예약금 · 취소 · 환불 안내</strong><br>
     예약은 예약금 입금 확인 후 확정됩니다.<br>
@@ -105,19 +110,56 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
     기상악화 및 안전상 운항이 불가능한 경우 예약금은 전액 환불됩니다.<br>
     고객 사정으로 인한 취소·변경은 예약문의 또는 카카오톡으로 문의해주세요.
   </div>
-
-  <div style="margin-top:15px;">
-    © 헌터호. All Rights Reserved.
-  </div>
+  <div style="margin-top:15px;">© 헌터호. All Rights Reserved.</div>
 </footer>
 
 <nav class="bottom"><a href="tel:01020030359">☎️<br>전화</a><a class="kakao" href="http://pf.kakao.com/_rkNSX/chat">💬<br>카카오톡</a><a class="band" href="https://band.us/n/a1afb9D482Ads">B<br>밴드</a><a class="reserve" href="#reserve">📅<br>예약</a></nav>
 
 <script>
-const program=document.getElementById('program'), hidden=document.getElementById('programHidden'), dateInput=document.getElementById('dateInput'), people=document.getElementById('people'), remaining=document.getElementById('remaining'), cal=document.getElementById('calendar'), monthTitle=document.getElementById('monthTitle');
+const program=document.getElementById('program'), hidden=document.getElementById('programHidden'), dateInput=document.getElementById('dateInput'), people=document.getElementById('people'), remaining=document.getElementById('remaining'), cal=document.getElementById('calendar'), monthTitle=document.getElementById('monthTitle'), programInfo=document.getElementById('programInfo');
+
+const programGuide={
+ '주간체험':{
+   title:'☀️ 주간체험 · 쭈꾸미 / 갑오징어',
+   time:'06:00 출항 · 14:30 입항',
+   provide:'물 · 음료 · 식사 제공',
+   prepare:'개인 낚시장비 또는 대여 장비 이용',
+   note:'기상 및 현장 상황에 따라 입항시간은 변동될 수 있습니다.'
+ },
+ '야간체험':{
+   title:'🌙 야간체험 · 장어 / 꽃게',
+   time:'17:00 출항 · 23:00 입항',
+   provide:'물 · 음료 · 사발면 · 꽃게라면 제공',
+   prepare:'야간 체험에 맞는 편한 복장 권장',
+   note:'기상 및 현장 상황에 따라 출·입항시간은 전후로 변동될 수 있습니다.'
+ },
+ '선셋체험':{
+   title:'🌅 선셋체험',
+   time:'선셋 시간에 맞춰 출항',
+   provide:'시화호 노을과 마리나 경관 체험',
+   prepare:'편한 복장 · 사진 촬영 준비',
+   note:'계절별 일몰시간과 기상상황에 따라 운항시간이 달라질 수 있습니다.'
+ }
+};
+
+function updateProgramInfo(){
+ const g=programGuide[program.value];
+ programInfo.innerHTML=`
+   <h3>${g.title}</h3>
+   <div class="infoGrid">
+     <div class="infoChip"><b>⏰ 운항시간</b>${g.time}</div>
+     <div class="infoChip"><b>🎁 제공사항</b>${g.provide}</div>
+     <div class="infoChip"><b>🎒 준비</b>${g.prepare}</div>
+     <div class="infoChip"><b>⚓ 출항장소</b>거북섬 마리나</div>
+   </div>
+   <div class="infoNote">※ ${g.note}</div>`;
+}
+
 const now=new Date(); let view=new Date(now.getFullYear(),now.getMonth(),1);
 dateInput.min=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().split('T')[0];
+
 function mk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+
 async function availability(){
  hidden.value=program.value;
  if(!dateInput.value){remaining.textContent='달력에서 날짜를 선택해주세요.';return}
@@ -125,6 +167,7 @@ async function availability(){
  if(d.state==='예약가능'){remaining.textContent='✅ 예약 가능 · 잔여 '+d.remaining+'명';people.max=Math.max(1,d.remaining)}
  else{remaining.textContent='⛔ '+d.state;people.max=1}
 }
+
 async function load(){
  hidden.value=program.value; monthTitle.textContent=view.getFullYear()+'년 '+(view.getMonth()+1)+'월';
  const r=await fetch('/api/calendar?program='+encodeURIComponent(program.value)+'&month='+mk(view)),d=await r.json();
@@ -140,15 +183,37 @@ async function load(){
  }
  cal.innerHTML=h;
 }
+
 function pick(v){dateInput.value=v;availability();load();document.getElementById('reserveForm').scrollIntoView({behavior:'smooth'})}
+
 document.getElementById('prev').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);load()}
 document.getElementById('next').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);load()}
-program.onchange=()=>{dateInput.value='';remaining.textContent='달력에서 날짜를 선택해주세요.';load()}
+
+program.onchange=()=>{
+ dateInput.value='';
+ remaining.textContent='달력에서 날짜를 선택해주세요.';
+ updateProgramInfo();
+ load();
+ updatePay();
+}
+
 dateInput.onchange=()=>{availability();let p=dateInput.value.split('-');if(p.length===3){view=new Date(+p[0],+p[1]-1,1);load()}}
+
 const paymentType=document.getElementById('paymentType'),payAmount=document.getElementById('payAmount');
-function updatePay(){const prices={'주간체험':100000,'야간체험':80000,'선셋체험':250000};let total=program.value==='선셋체험'?250000:prices[program.value]*Math.max(1,Number(people.value||1));let amount=paymentType.value==='5만원 선입금'?50000:total;payAmount.textContent=amount.toLocaleString()+'원'}
-paymentType.addEventListener('change',updatePay);people.addEventListener('input',updatePay);program.addEventListener('change',updatePay);updatePay();
-load()
+
+function updatePay(){
+ const prices={'주간체험':100000,'야간체험':80000,'선셋체험':250000};
+ let total=program.value==='선셋체험'?250000:prices[program.value]*Math.max(1,Number(people.value||1));
+ let amount=paymentType.value==='5만원 선입금'?50000:total;
+ payAmount.textContent=amount.toLocaleString()+'원';
+}
+
+paymentType.addEventListener('change',updatePay);
+people.addEventListener('input',updatePay);
+
+updateProgramInfo();
+updatePay();
+load();
 </script>
 </body>
 </html>

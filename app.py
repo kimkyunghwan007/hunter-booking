@@ -25,7 +25,7 @@ BANK_HOLDER = "김경환"
 
 PROGRAMS = {
     "주간체험": {"price": 100000, "capacity": 8},
-    "야간체험": {"price": 80000, "capacity": 8},
+    "야간체험": {"price": 80000, "capacity": 6},
     "선셋체험": {"price": 250000, "capacity": 4},
 }
 
@@ -68,6 +68,15 @@ def init_db():
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_type TEXT")
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_amount INTEGER")
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS total_amount INTEGER")
+
+    # 기존에 야간체험 정원이 8명으로 저장된 날짜는 6명으로 자동 수정
+    con.execute("""
+        UPDATE schedule
+        SET capacity = 6
+        WHERE program = '야간체험'
+          AND capacity = 8
+    """)
+
     con.commit()
     con.close()
 

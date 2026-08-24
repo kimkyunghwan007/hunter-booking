@@ -64,9 +64,9 @@ input,select{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px
 <h2>날짜별 운항 설정</h2>
 <form method="post" action="/admin/schedule" class="card">
 <label>체험</label>
-<select name="program"><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
+<select name="program" id="scheduleProgram"><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
 <label>날짜</label><input id="scheduleDate" type="date" name="date" required>
-<label>정원</label><input type="number" name="capacity" value="8" min="1" max="9">
+<label>정원</label><input id="scheduleCapacity" type="number" name="capacity" value="8" min="1" max="9">
 <label>상태</label><select name="state"><option>예약가능</option><option>예약마감</option><option>운항없음</option></select>
 <button class="gold">저장</button>
 </form>
@@ -206,6 +206,18 @@ function selectDay(dt){
 
 document.getElementById('prevMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);drawCalendar()};
 document.getElementById('nextMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);drawCalendar()};
+
+const scheduleProgram=document.getElementById('scheduleProgram');
+const scheduleCapacity=document.getElementById('scheduleCapacity');
+
+function setDefaultCapacity(){
+  if(scheduleProgram.value==='주간체험') scheduleCapacity.value=8;
+  else if(scheduleProgram.value==='야간체험') scheduleCapacity.value=6;
+  else if(scheduleProgram.value==='선셋체험') scheduleCapacity.value=4;
+}
+scheduleProgram.addEventListener('change',setDefaultCapacity);
+setDefaultCapacity();
+
 drawCalendar();
 </script>
 </body>

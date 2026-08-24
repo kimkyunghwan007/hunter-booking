@@ -7,167 +7,115 @@
 <style>
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",sans-serif;background:#eef3f7;color:#162437}
-a{text-decoration:none;color:inherit}
-header{position:sticky;top:0;z-index:20;background:#0b2945;color:white;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 14px rgba(0,0,0,.12)}
-header b{font-size:19px}header a{font-size:13px;background:#ffffff1a;padding:8px 11px;border-radius:9px}
-main{max-width:760px;margin:auto;padding:16px}
-section{margin-bottom:22px}
-h2{font-size:21px;margin:8px 0 12px}
-.card{background:white;border-radius:17px;padding:16px;margin:10px 0;box-shadow:0 5px 18px rgba(15,43,68,.08);border:1px solid #e7edf2}
-.flash{background:#fff3cd;border:1px solid #f1d675;padding:13px;border-radius:11px;margin-bottom:13px;font-weight:700}
+header{position:sticky;top:0;z-index:20;background:#0b2945;color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center}
+header a{color:#fff;text-decoration:none;font-size:13px;background:#ffffff1c;padding:8px 10px;border-radius:9px}
+main{max-width:780px;margin:auto;padding:16px}
+h2{font-size:21px;margin:10px 0 12px}
+.card{background:#fff;border-radius:17px;padding:16px;margin:10px 0;box-shadow:0 5px 18px rgba(15,43,68,.08);border:1px solid #e6edf2}
+.flash{background:#fff3cd;border:1px solid #efd673;padding:13px;border-radius:11px;font-weight:800}
 label{display:block;font-weight:800;font-size:14px;margin:12px 0 6px}
-input,select{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px;background:white;font-size:16px}
-.gold{width:100%;border:0;background:#d9a936;color:#172332;padding:14px;border-radius:11px;font-weight:900;font-size:16px;margin-top:14px}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.actions form{margin:0}
-.actions button{width:100%;padding:11px;border:0;border-radius:9px;background:#0b2945;color:white;font-weight:800}
-.actions .muted{background:#e7ecf1;color:#172332}
+input,select{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px;background:#fff;font-size:16px}
+.gold{width:100%;border:0;background:#d9a936;padding:14px;border-radius:11px;font-weight:900;margin-top:14px}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+.actions form{margin:0}.actions button{width:100%;padding:10px 3px;border:0;border-radius:9px;background:#0b2945;color:#fff;font-weight:800}
+.actions .paid{background:#16734a}.actions .muted{background:#e7ecf1;color:#172332}
 .status{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#eaf5ef;color:#147044;font-size:12px;font-weight:800}
-
-.calhead{display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px}
+.pay{margin-top:9px;padding:10px;background:#fff8e8;border-radius:9px;font-size:13px;line-height:1.55}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .calhead button{border:0;background:#e9eef3;border-radius:10px;padding:10px 14px;font-size:19px;font-weight:900}
 .calmonth{font-weight:900;font-size:19px}
 .week,.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .week div{text-align:center;font-size:12px;color:#7a8896;font-weight:800;padding:4px 0}
-.day{min-height:86px;border:1px solid #dfe6ec;border-radius:10px;padding:6px 3px;background:white;text-align:center}
-.day.blank{border:0;background:transparent}.day.clickable{cursor:pointer}.day.selected{border:2px solid #0b5f93;background:#edf7fd}
-.dnum{font-weight:900;font-size:14px;margin-bottom:4px}
-.mini{font-size:9px;line-height:1.25;margin:2px 0;padding:3px 2px;border-radius:6px;font-weight:800}
+.day{min-height:102px;border:1px solid #dfe6ec;border-radius:10px;padding:6px 3px;background:#fff;text-align:center;cursor:pointer}
+.day.blank{border:0;background:transparent;cursor:default}
+.day.selected{border:2px solid #0b5f93;background:#edf7fd}
+.dnum{font-weight:900;font-size:14px;margin-bottom:5px}
+.mini{font-size:9px;line-height:1.25;margin:3px 0;padding:4px 2px;border-radius:6px;font-weight:900}
 .daymini{background:#eaf5ef;color:#187447}.nightmini{background:#eef2ff;color:#4757a7}.sunmini{background:#fff2e5;color:#b86616}
-.closedmini{background:#fdebec;color:#b43b42}
-.legend{display:flex;gap:9px;flex-wrap:wrap;font-size:11px;color:#687788;margin-top:10px}
-
-.summary{background:#0b2945;color:white;border-radius:14px;padding:14px;margin-top:12px}
-.summaryTitle{font-weight:900;font-size:17px}.summarySub{font-size:12px;color:#c7d6e2;margin-top:3px}
-.booking.hidden{display:none}
-.empty{color:#748290;text-align:center;padding:18px}
-.small{font-size:12px;color:#6f7d8a}
-.badgeRow{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-.badge{font-size:11px;padding:4px 7px;border-radius:999px;background:#eef3f7;color:#425161;font-weight:800}
+.fullmini{background:#fdebec!important;color:#b43b42!important}.offmini{background:#eceff2!important;color:#6d7780!important}
+.summary{background:#0b2945;color:#fff;border-radius:14px;padding:14px;margin-top:12px}
+.summary b{font-size:17px}.summary div{margin-top:5px;font-size:13px;color:#d3dce4}
+.booking.hidden{display:none}.empty{color:#748290;text-align:center;padding:18px}
 </style>
 </head>
 <body>
-
-<header>
-  <b>⚓ 헌터호 관리자</b>
-  <a href="/admin/logout">로그아웃</a>
-</header>
-
+<header><b>⚓ 헌터호 관리자</b><a href="/admin/logout">로그아웃</a></header>
 <main>
 
 {% with messages = get_flashed_messages() %}
-{% if messages %}
-<div class="flash">{{messages[0]}}</div>
-{% endif %}
+{% if messages %}<div class="flash">{{messages[0]}}</div>{% endif %}
 {% endwith %}
 
 <section>
-  <h2>예약 현황 달력</h2>
-  <div class="card">
-    <div class="calhead">
-      <button type="button" id="prevMonth">‹</button>
-      <div id="calMonth" class="calmonth"></div>
-      <button type="button" id="nextMonth">›</button>
-    </div>
-
-    <div class="week">
-      <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
-    </div>
-
-    <div id="calendar" class="calendar"></div>
-
-    <div class="legend">
-      <span>🟢 주간</span>
-      <span>🔵 야간</span>
-      <span>🟠 선셋</span>
-      <span>날짜를 누르면 아래 명단이 필터됩니다</span>
-    </div>
-
-    <div id="daySummary" class="summary">
-      <div class="summaryTitle">전체 예약 보기</div>
-      <div class="summarySub">달력에서 날짜를 선택해주세요.</div>
-    </div>
+<h2>예약 현황 달력</h2>
+<div class="card">
+  <div class="calhead">
+    <button type="button" id="prevMonth">‹</button>
+    <div class="calmonth" id="calMonth"></div>
+    <button type="button" id="nextMonth">›</button>
   </div>
+  <div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+  <div id="calendar" class="calendar"></div>
+  <div id="daySummary" class="summary"><b>날짜를 선택해주세요.</b><div>날짜별 예약 인원을 확인할 수 있습니다.</div></div>
+</div>
 </section>
 
 <section>
-  <h2>날짜별 운항 설정</h2>
-  <form method="post" action="/admin/schedule" class="card">
-    <label>체험</label>
-    <select name="program">
-      <option>주간체험</option>
-      <option>야간체험</option>
-      <option>선셋체험</option>
-    </select>
-
-    <label>날짜</label>
-    <input id="scheduleDate" type="date" name="date" required>
-
-    <label>정원</label>
-    <input type="number" name="capacity" value="8" min="1" max="9">
-
-    <label>상태</label>
-    <select name="state">
-      <option>예약가능</option>
-      <option>예약마감</option>
-      <option>운항없음</option>
-    </select>
-
-    <button class="gold">저장</button>
-  </form>
+<h2>날짜별 운항 설정</h2>
+<form method="post" action="/admin/schedule" class="card">
+<label>체험</label>
+<select name="program"><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
+<label>날짜</label><input id="scheduleDate" type="date" name="date" required>
+<label>정원</label><input type="number" name="capacity" value="8" min="1" max="9">
+<label>상태</label><select name="state"><option>예약가능</option><option>예약마감</option><option>운항없음</option></select>
+<button class="gold">저장</button>
+</form>
 </section>
 
 <section>
-  <h2>예약자 명단</h2>
-
-  <div id="bookingList">
-  {% if bookings %}
-    {% for b in bookings %}
-    <div class="card booking" data-date="{{b.date}}" data-program="{{b.program}}" data-people="{{b.people}}" data-status="{{b.status}}">
-      <b>{{b.date}} · {{b.program}}</b><br>
-      {{b.name}} · {{b.people}}명 · {{b.phone}}<br>
-      <span class="status">{{b.status}}</span>
-<div style="margin-top:9px;padding:10px;background:#fff8e8;border-radius:9px;font-size:13px">
-<b>입금:</b> {{b.payment_type or '기존 예약'}}{% if b.payment_amount %} · {{'{:,}'.format(b.payment_amount)}}원{% endif %}
+<h2>예약자 명단</h2>
+<div id="bookingList">
+{% if bookings %}
+{% for b in bookings %}
+<div class="card booking" data-date="{{b.date}}" data-program="{{b.program}}" data-people="{{b.people}}" data-status="{{b.status}}">
+<b>{{b.date}} · {{b.program}}</b><br>
+{{b.name}} · {{b.people}}명 · {{b.phone}}<br>
+<span class="status">{{b.status}}</span>
+<div class="pay">
+<b>입금:</b> {{b.payment_type or '기존 예약'}}
+{% if b.payment_amount %} · {{'{:,}'.format(b.payment_amount)}}원{% endif %}
 {% if b.total_amount %}<br><b>총 이용금액:</b> {{'{:,}'.format(b.total_amount)}}원{% endif %}
 </div>
-
-      <div class="actions">
-        <form method="post" action="/admin/booking/{{b.id}}/입금확인">
-<button style="background:#16734a">입금확인</button>
-</form>
-
-<form method="post" action="/admin/booking/{{b.id}}/예약확정">
-          <button>예약확정</button>
-        </form>
-        <form method="post" action="/admin/booking/{{b.id}}/취소">
-          <button class="muted">취소</button>
-        </form>
-      </div>
-    </div>
-    {% endfor %}
-  {% else %}
-    <div class="card empty">아직 접수된 예약이 없습니다.</div>
-  {% endif %}
-  </div>
+<div class="actions">
+<form method="post" action="/admin/booking/{{b.id}}/입금확인"><button class="paid">입금확인</button></form>
+<form method="post" action="/admin/booking/{{b.id}}/예약확정"><button>예약확정</button></form>
+<form method="post" action="/admin/booking/{{b.id}}/취소"><button class="muted">취소</button></form>
+</div>
+</div>
+{% endfor %}
+{% else %}
+<div class="card empty">아직 접수된 예약이 없습니다.</div>
+{% endif %}
+</div>
 </section>
 
 <section>
-  <h2>설정된 운항일</h2>
-  {% if schedules %}
-    {% for s in schedules %}
-    <div class="card">
-      <b>{{s.date}} · {{s.program}}</b><br>
-      정원 {{s.capacity}}명 · {{s.state}}
-    </div>
-    {% endfor %}
-  {% else %}
-    <div class="card">별도 설정된 운항일이 없습니다.</div>
-  {% endif %}
+<h2>설정된 운항일</h2>
+{% if schedules %}
+{% for s in schedules %}
+<div class="card"><b>{{s.date}} · {{s.program}}</b><br>정원 {{s.capacity}}명 · {{s.state}}</div>
+{% endfor %}
+{% else %}
+<div class="card">별도 설정된 운항일이 없습니다.</div>
+{% endif %}
 </section>
 
 </main>
 
 <script>
+const reservedCounts={{reserved_counts|tojson}};
+const scheduleInfo={{schedule_info|tojson}};
+const programs={{programs|tojson}};
 const bookingEls=[...document.querySelectorAll('.booking')];
 const cal=document.getElementById('calendar');
 const calMonth=document.getElementById('calMonth');
@@ -178,97 +126,73 @@ const now=new Date();
 let view=new Date(now.getFullYear(),now.getMonth(),1);
 let selectedDate='';
 
-function ymd(y,m,d){
-  return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-}
+function ymd(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
 
-function aggregate(){
-  const map={};
-  bookingEls.forEach(el=>{
-    const date=el.dataset.date;
-    const program=el.dataset.program;
-    const people=Number(el.dataset.people||0);
-    const status=el.dataset.status;
-    if(status==='취소') return;
-    if(!map[date]) map[date]={'주간체험':0,'야간체험':0,'선셋체험':0};
-    map[date][program]=(map[date][program]||0)+people;
-  });
-  return map;
+function programLine(dt,program,cssClass){
+  const key=dt+'|'+program;
+  const reserved=Number(reservedCounts[key]||0);
+  const custom=scheduleInfo[key]||null;
+  const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);
+  const state=custom?custom.state:'예약가능';
+  const label=program.replace('체험','');
+
+  if(state==='운항없음') return `<div class="mini offmini">${label} 운항없음</div>`;
+  if(state==='예약마감'||reserved>=capacity) return `<div class="mini ${cssClass} fullmini">${label} ${reserved}/${capacity} 마감</div>`;
+  if(reserved>0) return `<div class="mini ${cssClass}">${label} ${reserved}/${capacity}명</div>`;
+  return '';
 }
 
 function drawCalendar(){
-  const data=aggregate();
-  const y=view.getFullYear(), m=view.getMonth();
+  const y=view.getFullYear(),m=view.getMonth();
   calMonth.textContent=y+'년 '+(m+1)+'월';
   const first=new Date(y,m,1).getDay();
   const last=new Date(y,m+1,0).getDate();
-  let h='';
+  let html='';
 
-  for(let i=0;i<first;i++) h+='<div class="day blank"></div>';
+  for(let i=0;i<first;i++) html+='<div class="day blank"></div>';
 
   for(let d=1;d<=last;d++){
-    const date=ymd(y,m,d);
-    const x=data[date]||{};
-    let rows='';
-    if(x['주간체험']) rows+=`<div class="mini daymini">주간 ${x['주간체험']}명</div>`;
-    if(x['야간체험']) rows+=`<div class="mini nightmini">야간 ${x['야간체험']}명</div>`;
-    if(x['선셋체험']) rows+=`<div class="mini sunmini">선셋 ${x['선셋체험']}명</div>`;
-    const sel=selectedDate===date?' selected':'';
-    h+=`<div class="day clickable${sel}" onclick="selectDay('${date}')">
+    const dt=ymd(y,m,d);
+    const rows=
+      programLine(dt,'주간체험','daymini')+
+      programLine(dt,'야간체험','nightmini')+
+      programLine(dt,'선셋체험','sunmini');
+
+    html+=`<div class="day${selectedDate===dt?' selected':''}" onclick="selectDay('${dt}')">
       <div class="dnum">${d}</div>${rows}
     </div>`;
   }
-  cal.innerHTML=h;
+  cal.innerHTML=html;
 }
 
-function selectDay(date){
-  selectedDate=date;
-  scheduleDate.value=date;
+function selectDay(dt){
+  selectedDate=dt;
+  scheduleDate.value=dt;
 
-  let count=0, people=0;
-  let programTotals={'주간체험':0,'야간체험':0,'선셋체험':0};
-
+  let count=0;
   bookingEls.forEach(el=>{
-    const match=el.dataset.date===date;
+    const match=el.dataset.date===dt;
     el.classList.toggle('hidden',!match);
-    if(match){
-      count++;
-      people+=Number(el.dataset.people||0);
-      if(el.dataset.status!=='취소'){
-        programTotals[el.dataset.program]+=Number(el.dataset.people||0);
-      }
-    }
+    if(match) count++;
   });
 
-  summary.innerHTML=`
-    <div class="summaryTitle">${date} 예약 현황</div>
-    <div class="summarySub">예약 ${count}건 · 총 ${people}명</div>
-    <div class="badgeRow">
-      <span class="badge">주간 ${programTotals['주간체험']}명</span>
-      <span class="badge">야간 ${programTotals['야간체험']}명</span>
-      <span class="badge">선셋 ${programTotals['선셋체험']}명</span>
-    </div>`;
-
-  if(count===0){
-    summary.innerHTML=`
-      <div class="summaryTitle">${date}</div>
-      <div class="summarySub">예약자가 없습니다.</div>`;
+  const lines=[];
+  for(const program of ['주간체험','야간체험','선셋체험']){
+    const key=dt+'|'+program;
+    const reserved=Number(reservedCounts[key]||0);
+    const custom=scheduleInfo[key]||null;
+    const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);
+    const state=custom?custom.state:'예약가능';
+    lines.push(`${program}: ${reserved}/${capacity}명 · ${state}`);
   }
 
+  summary.innerHTML=`<b>${dt} 예약 현황</b><div>${lines.join('<br>')}</div><div>예약자 ${count}건</div>`;
   drawCalendar();
   document.getElementById('bookingList').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-document.getElementById('prevMonth').onclick=()=>{
-  view=new Date(view.getFullYear(),view.getMonth()-1,1);
-  drawCalendar();
-};
-
-document.getElementById('nextMonth').onclick=()=>{
-  view=new Date(view.getFullYear(),view.getMonth()+1,1);
-  drawCalendar();
-};
-
+document.getElementById('prevMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);drawCalendar()};
+document.getElementById('nextMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);drawCalendar()};
 drawCalendar();
 </script>
 </body>

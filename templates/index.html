@@ -3,171 +3,175 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#08243d">
   <title>거북섬 헌터호 예약</title>
   <style>
-    *{box-sizing:border-box} html{scroll-behavior:smooth}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",sans-serif;background:#f4f7fb;color:#172033;padding-bottom:78px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",sans-serif;background:#f3f6f9;color:#172332;padding-bottom:82px}
     a{text-decoration:none;color:inherit}
-    .hero{background:linear-gradient(145deg,#071d36,#0e4671);color:white;padding:42px 20px 34px;text-align:center}
-    .hero .small{font-size:14px;opacity:.82;letter-spacing:.04em}
-    .hero h1{font-size:36px;margin:7px 0 4px}
-    .hero p{margin:0 0 22px;opacity:.9}
-    .hero .cta{display:inline-block;background:#f0b84b;color:#152235;font-weight:800;padding:13px 24px;border-radius:999px}
+    .hero{background:linear-gradient(155deg,#061b30 0%,#0b4169 65%,#146a8a 100%);color:#fff;padding:42px 20px 35px;text-align:center}
+    .eyebrow{font-size:13px;font-weight:700;letter-spacing:.1em;opacity:.78}
+    .hero h1{font-size:38px;margin:7px 0 3px;letter-spacing:-.04em}
+    .hero p{margin:0 0 22px;color:#d9e8f3;font-size:15px}
+    .hero .cta{display:inline-block;background:#f3b84b;color:#142232;font-weight:900;padding:14px 26px;border-radius:999px;box-shadow:0 7px 20px rgba(0,0,0,.18)}
     main{max-width:680px;margin:auto;padding:18px}
-    .section-title{font-size:22px;margin:16px 0 12px}
-    .cards{display:grid;gap:12px}
-    .card{background:white;border-radius:18px;padding:18px;box-shadow:0 6px 22px rgba(21,45,74,.08)}
-    .program h3{margin:0 0 6px;font-size:20px}
-    .program p{margin:3px 0;color:#536274}
-    .price{font-size:20px;font-weight:800;color:#0e4671;margin-top:9px}
-    .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
-    .quick a{padding:15px 10px;text-align:center;border-radius:15px;font-weight:800;background:white;box-shadow:0 5px 18px rgba(21,45,74,.08)}
-    .quick .kakao{background:#fee500;color:#191919}
-    .quick .band{background:#20c75a;color:white}
-    label{display:block;font-weight:750;margin:13px 0 6px}
-    select,input{width:100%;padding:14px;border:1px solid #d7dee7;border-radius:12px;background:white;font-size:16px}
-    .remaining{margin:10px 0;padding:12px;border-radius:12px;background:#eef6ff;color:#0b548c;font-weight:750}
-    .flash{background:#fff3cd;border:1px solid #ffe08a;padding:13px;border-radius:12px;margin-bottom:12px}
-    .privacy{margin-top:15px;padding:14px;background:#f6f8fb;border-radius:13px;font-size:13px;line-height:1.6;color:#4c5968}
-    .agree{display:flex;gap:9px;align-items:flex-start;margin:12px 0 4px;font-size:14px;font-weight:650}
-    .agree input{width:20px;height:20px;margin:0;flex:0 0 auto}
-    .submit{width:100%;border:0;background:#0c3b63;color:white;padding:16px;border-radius:13px;font-size:17px;font-weight:850;margin-top:14px}
-    .notice{font-size:13px;color:#667484;line-height:1.65;margin-top:12px}
-    .bottom{position:fixed;z-index:20;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:white;border-top:1px solid #e0e5eb;box-shadow:0 -4px 16px rgba(0,0,0,.06);padding-bottom:env(safe-area-inset-bottom)}
-    .bottom a{padding:13px 3px 11px;text-align:center;font-size:12px;font-weight:800}
-    .bottom .kakao{background:#fee500}.bottom .band{background:#20c75a;color:white}.bottom .reserve{background:#0c3b63;color:white}
+    .title{font-size:22px;margin:17px 0 12px;letter-spacing:-.03em}
+    .sub{margin:-5px 0 14px;color:#687788;font-size:14px}
+    .cards{display:grid;gap:11px}
+    .card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 22px rgba(19,48,75,.08);border:1px solid #edf1f5}
+    .program{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .program h3{margin:0 0 5px;font-size:19px}.program p{margin:0;color:#657486;font-size:14px}
+    .price{text-align:right;font-size:17px;font-weight:900;color:#0a4d7d;white-space:nowrap}
+    .price small{display:block;font-size:11px;font-weight:650;color:#7b8794;margin-top:2px}
+    .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 21px}
+    .quick a{padding:15px 8px;text-align:center;border-radius:14px;font-weight:900;box-shadow:0 5px 17px rgba(19,48,75,.08)}
+    .kakao{background:#fee500!important;color:#191919!important}.band{background:#20c75a!important;color:#fff!important}
+    label{display:block;font-weight:800;margin:14px 0 7px;font-size:14px}
+    select,input{width:100%;padding:14px;border:1px solid #d5dde6;border-radius:12px;background:#fff;font-size:16px;color:#172332;outline:none}
+    select:focus,input:focus{border-color:#17689d;box-shadow:0 0 0 3px rgba(23,104,157,.1)}
+    .remaining{margin:10px 0 3px;padding:12px 13px;border-radius:11px;background:#edf6fd;color:#0a578c;font-size:14px;font-weight:800}
+    .flash{background:#fff4ce;border:1px solid #f4d77b;padding:13px;border-radius:11px;margin-bottom:12px;font-weight:700}
+    .privacy{margin-top:16px;padding:14px;background:#f6f8fa;border-radius:12px;font-size:12px;line-height:1.65;color:#536171}
+    .agree{display:flex;gap:9px;align-items:flex-start;margin:13px 0 2px;font-size:14px}
+    .agree input{width:20px;height:20px;margin:0;flex:none}
+    .submit{width:100%;border:0;background:#0a3c62;color:#fff;padding:17px;border-radius:13px;font-size:17px;font-weight:900;margin-top:15px;cursor:pointer}
+    .submit:disabled{opacity:.55}
+    .guide{margin-top:14px;padding:13px;border-left:4px solid #f3b84b;background:#fffaf0;border-radius:7px 11px 11px 7px;color:#5d6670;font-size:13px;line-height:1.65}
+    .footer{text-align:center;color:#8a96a2;font-size:12px;padding:25px 0 5px}
+    .bottom{position:fixed;z-index:20;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #dde4ea;box-shadow:0 -4px 16px rgba(0,0,0,.07);padding-bottom:env(safe-area-inset-bottom)}
+    .bottom a{padding:12px 3px 10px;text-align:center;font-size:12px;font-weight:900;line-height:1.25}.bottom .reserve{background:#0a3c62;color:#fff}
   </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="small">거북섬 마리나</div>
-    <h1>⚓ 헌터호</h1>
-    <p>주간 · 야간 · 선셋 체험</p>
-    <a class="cta" href="#reserve">지금 예약하기</a>
-  </header>
+<header class="hero">
+  <div class="eyebrow">거북섬 마리나 · HUNTER BOAT</div>
+  <h1>⚓ 헌터호</h1>
+  <p>가까운 바다에서 즐기는 특별한 하루</p>
+  <a class="cta" href="#reserve">예약 가능일 확인하기</a>
+</header>
 
-  <main>
-    <h2 class="section-title">체험 프로그램</h2>
-    <div class="cards">
-      <div class="card program">
-        <h3>☀️ 주간체험</h3>
-        <p>거북섬에서 즐기는 주간 체험</p>
-        <div class="price">1인 100,000원</div>
-      </div>
-      <div class="card program">
-        <h3>🌙 야간체험</h3>
-        <p>밤바다에서 즐기는 야간 체험</p>
-        <div class="price">1인 80,000원</div>
-      </div>
-      <div class="card program">
-        <h3>🌅 선셋체험</h3>
-        <p>노을과 함께 즐기는 선셋 체험</p>
-        <div class="price">4인 기준 250,000원</div>
-      </div>
+<main>
+  <h2 class="title">체험 프로그램</h2>
+  <p class="sub">원하시는 체험과 날짜를 선택해 예약하세요.</p>
+
+  <div class="cards">
+    <div class="card program">
+      <div><h3>☀️ 주간체험</h3><p>낮 시간에 여유롭게 즐기는 바다 체험</p></div>
+      <div class="price">100,000원<small>1인</small></div>
     </div>
-
-    <div class="quick">
-      <a class="kakao" href="http://pf.kakao.com/_rkNSX/chat" target="_blank" rel="noopener">💬 카카오톡 문의</a>
-      <a class="band" href="https://band.us/n/a1afb9D482Ads" target="_blank" rel="noopener">B 네이버 밴드</a>
+    <div class="card program">
+      <div><h3>🌙 야간체험</h3><p>밤바다의 분위기와 함께하는 체험</p></div>
+      <div class="price">80,000원<small>1인</small></div>
     </div>
+    <div class="card program">
+      <div><h3>🌅 선셋체험</h3><p>시화호 노을과 함께하는 특별한 시간</p></div>
+      <div class="price">250,000원<small>4인 기준</small></div>
+    </div>
+  </div>
 
-    <section id="reserve">
-      <h2 class="section-title">예약하기</h2>
-      <div class="card">
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}<div class="flash">{{ messages[0] }}</div>{% endif %}
-        {% endwith %}
+  <div class="quick">
+    <a class="kakao" href="http://pf.kakao.com/_rkNSX/chat" target="_blank" rel="noopener">💬 카카오톡 문의</a>
+    <a class="band" href="https://band.us/n/a1afb9D482Ads" target="_blank" rel="noopener">B 네이버 밴드</a>
+  </div>
 
-        <form method="post" action="/reserve">
-          <label for="program">체험 선택</label>
-          <select id="program" name="program" required>
-            {% for name, info in programs.items() %}
-            <option value="{{ name }}">{{ name }}</option>
-            {% endfor %}
-          </select>
+  <section id="reserve">
+    <h2 class="title">온라인 예약</h2>
+    <p class="sub">신청 후 관리자 확인을 거쳐 최종 확정됩니다.</p>
+    <div class="card">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}<div class="flash">{{ messages[0] }}</div>{% endif %}
+      {% endwith %}
 
-          <label for="date">날짜</label>
-          <input id="date" name="date" type="date" required>
+      <form method="post" action="/reserve" id="reserveForm">
+        <label for="program">체험 선택</label>
+        <select id="program" name="program" required>
+          {% for name, info in programs.items() %}
+          <option value="{{ name }}">{{ name }}</option>
+          {% endfor %}
+        </select>
 
-          <div id="remaining" class="remaining">날짜를 선택하면 잔여인원이 표시됩니다.</div>
+        <label for="date">예약 날짜</label>
+        <input id="date" name="date" type="date" required>
+        <div id="remaining" class="remaining">날짜를 선택하면 예약 가능 인원을 확인합니다.</div>
 
-          <label for="people">인원</label>
-          <input id="people" name="people" type="number" min="1" max="9" value="1" required>
+        <label for="people">예약 인원</label>
+        <input id="people" name="people" type="number" min="1" max="8" value="1" required>
 
-          <label for="name">예약자 이름</label>
-          <input id="name" name="name" type="text" maxlength="30" autocomplete="name" required>
+        <label for="name">예약자 이름</label>
+        <input id="name" name="name" type="text" maxlength="30" placeholder="이름을 입력해주세요" autocomplete="name" required>
 
-          <label for="phone">휴대전화</label>
-          <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="01012345678" maxlength="13" autocomplete="tel" required>
+        <label for="phone">휴대전화번호</label>
+        <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="01012345678" maxlength="13" autocomplete="tel" required>
 
-          <div class="privacy">
-            <b>개인정보 수집·이용 안내</b><br>
-            수집항목: 예약자 이름, 휴대전화번호, 예약일·체험·인원<br>
-            이용목적: 예약 접수·확정·취소 안내 및 예약 관리<br>
-            보유기간: 예약 업무 종료 후 관련 법령 및 운영상 필요한 기간 동안 보관 후 파기<br>
-            동의를 거부할 수 있으나, 필수정보 수집에 동의하지 않으면 온라인 예약 신청이 어렵습니다.
-          </div>
-
-          <label class="agree">
-            <input type="checkbox" required>
-            <span>개인정보 수집·이용에 동의합니다. (필수)</span>
-          </label>
-
-          <button class="submit" type="submit">예약 신청하기</button>
-        </form>
-
-        <div class="notice">
-          예약 신청 후 관리자 확인을 거쳐 확정됩니다.<br>
-          예약확정 또는 취소 처리 시 입력하신 휴대전화로 안내 문자가 발송됩니다.
+        <div class="privacy">
+          <b>개인정보 수집·이용 안내</b><br>
+          수집항목: 이름, 휴대전화번호, 예약일, 체험 종류, 인원<br>
+          이용목적: 예약 접수·확정·취소 안내 및 예약 관리<br>
+          보유기간: 예약 업무 종료 후 관련 법령 및 운영상 필요한 기간 동안 보관 후 파기<br>
+          필수정보 수집에 동의하지 않으면 온라인 예약 신청이 어렵습니다.
         </div>
+
+        <label class="agree">
+          <input type="checkbox" required>
+          <span>개인정보 수집·이용에 동의합니다. (필수)</span>
+        </label>
+
+        <button class="submit" type="submit">예약 신청하기</button>
+      </form>
+
+      <div class="guide">
+        <b>예약 안내</b><br>
+        예약 신청 즉시 접수되며, 관리자 확인 후 예약확정 문자가 발송됩니다.<br>
+        기상 및 운항 상황에 따라 일정이 변경될 수 있습니다.
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <nav class="bottom">
-    <a href="tel:01020030359">☎️<br>전화</a>
-    <a class="kakao" href="http://pf.kakao.com/_rkNSX/chat" target="_blank" rel="noopener">💬<br>카카오톡</a>
-    <a class="band" href="https://band.us/n/a1afb9D482Ads" target="_blank" rel="noopener">B<br>밴드</a>
-    <a class="reserve" href="#reserve">📅<br>예약</a>
-  </nav>
+  <div class="footer">거북섬 마리나 · 헌터호</div>
+</main>
 
-  <script>
-    const program = document.getElementById('program');
-    const date = document.getElementById('date');
-    const people = document.getElementById('people');
-    const remaining = document.getElementById('remaining');
+<nav class="bottom">
+  <a href="tel:01020030359">☎️<br>전화</a>
+  <a class="kakao" href="http://pf.kakao.com/_rkNSX/chat" target="_blank" rel="noopener">💬<br>카카오톡</a>
+  <a class="band" href="https://band.us/n/a1afb9D482Ads" target="_blank" rel="noopener">B<br>밴드</a>
+  <a class="reserve" href="#reserve">📅<br>예약</a>
+</nav>
 
-    const today = new Date();
-    const localToday = new Date(today.getTime() - today.getTimezoneOffset()*60000).toISOString().split('T')[0];
-    date.min = localToday;
+<script>
+  const program = document.getElementById('program');
+  const date = document.getElementById('date');
+  const people = document.getElementById('people');
+  const remaining = document.getElementById('remaining');
 
-    async function checkAvailability() {
-      if (!program.value || !date.value) {
-        remaining.textContent = '날짜를 선택하면 잔여인원이 표시됩니다.';
+  const now = new Date();
+  date.min = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().split('T')[0];
+
+  async function checkAvailability(){
+    if(!program.value || !date.value){
+      remaining.textContent='날짜를 선택하면 예약 가능 인원을 확인합니다.';
+      return;
+    }
+    remaining.textContent='예약 가능 인원 확인 중...';
+    try{
+      const res=await fetch('/api/availability?program='+encodeURIComponent(program.value)+'&date='+encodeURIComponent(date.value));
+      const data=await res.json();
+      if(!data.ok){
+        remaining.textContent=data.message || '예약 가능 여부를 확인할 수 없습니다.';
         return;
       }
-      remaining.textContent = '잔여인원 확인 중...';
-      try {
-        const res = await fetch('/api/availability?program=' + encodeURIComponent(program.value) + '&date=' + encodeURIComponent(date.value));
-        const data = await res.json();
-        if (!data.ok) {
-          remaining.textContent = data.message || '잔여인원을 확인할 수 없습니다.';
-          return;
-        }
-        if (data.state === '예약가능') {
-          remaining.textContent = '현재 잔여 ' + data.remaining + '명';
-          people.max = Math.max(1, data.remaining);
-        } else {
-          remaining.textContent = data.state;
-          people.max = 1;
-        }
-      } catch (e) {
-        remaining.textContent = '잔여인원을 확인할 수 없습니다.';
+      if(data.state==='예약가능'){
+        remaining.textContent='✅ 예약 가능 · 잔여 '+data.remaining+'명';
+        people.max=Math.max(1,data.remaining);
+      }else{
+        remaining.textContent='⛔ '+data.state;
+        people.max=1;
       }
+    }catch(e){
+      remaining.textContent='예약 가능 여부를 확인할 수 없습니다.';
     }
-
-    program.addEventListener('change', checkAvailability);
-    date.addEventListener('change', checkAvailability);
-  </script>
+  }
+  program.addEventListener('change',checkAvailability);
+  date.addEventListener('change',checkAvailability);
+</script>
 </body>
 </html>

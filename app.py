@@ -184,7 +184,7 @@ def availability(program, date):
 
 @app.route("/hunter-main.png")
 def hunter_main_image():
-    return send_from_directory(app.root_path, "hunter-main.png")
+    return send_from_directory(app.root_path, "hunter-main-1.png")
 
 
 @app.route("/")

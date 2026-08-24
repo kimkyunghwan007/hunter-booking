@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_from_directory
 import os
 import psycopg
 from psycopg.rows import dict_row
@@ -22,6 +22,7 @@ PROGRAMS = {
     "야간체험": {"price": 80000, "capacity": 8},
     "선셋체험": {"price": 250000, "capacity": 4},
 }
+
 
 def send_admin_sms(program, date, people, name, phone):
     if not all([SOLAPI_API_KEY, SOLAPI_API_SECRET, SOLAPI_FROM, ADMIN_PHONE]):
@@ -54,7 +55,6 @@ def send_admin_sms(program, date, people, name, phone):
 
 
 def send_customer_status_sms(phone, program, date, status):
-    """예약 확정/취소 시 예약자에게 문자 알림을 보냅니다."""
     if not all([SOLAPI_API_KEY, SOLAPI_API_SECRET, SOLAPI_FROM]):
         print("SOLAPI 고객 문자 설정 누락")
         return
@@ -94,14 +94,15 @@ def send_customer_status_sms(phone, program, date, status):
         message_service.send(message)
         print(f"고객 {status} 문자 발송 성공")
     except Exception as e:
-        # 문자 실패가 관리자 페이지 동작을 막지 않게 합니다.
         print(f"고객 {status} 문자 발송 실패: {e}")
+
 
 def db():
     url = os.environ.get("DATABASE_URL")
     if not url:
         raise RuntimeError("DATABASE_URL 환경변수가 필요합니다.")
     return psycopg.connect(url, row_factory=dict_row)
+
 
 def init_db():
     con = db()
@@ -134,6 +135,7 @@ def init_db():
     con.commit()
     con.close()
 
+
 def get_schedule(program, date):
     con = db()
     row = con.execute(
@@ -141,14 +143,17 @@ def get_schedule(program, date):
         (program, date),
     ).fetchone()
     con.close()
+
     if row:
         return dict(row)
+
     return {
         "program": program,
         "date": date,
         "capacity": PROGRAMS[program]["capacity"],
         "state": "예약가능",
     }
+
 
 def booked_people(program, date):
     con = db()
@@ -162,27 +167,42 @@ def booked_people(program, date):
     con.close()
     return int(row["total"])
 
+
 def availability(program, date):
     sch = get_schedule(program, date)
+
     if sch["state"] != "예약가능":
         return 0, sch["state"]
+
     remaining = max(0, int(sch["capacity"]) - booked_people(program, date))
+
     if remaining == 0:
         return 0, "예약마감"
+
     return remaining, "예약가능"
+
+
+@app.route("/hunter-main.png")
+def hunter_main_image():
+    return send_from_directory(app.root_path, "hunter-main.png")
+
 
 @app.route("/")
 def home():
     return render_template("index.html", programs=PROGRAMS)
 
+
 @app.route("/api/availability")
 def api_availability():
     program = request.args.get("program")
     date = request.args.get("date")
+
     if program not in PROGRAMS or not date:
         return jsonify({"ok": False, "message": "잘못된 요청입니다."}), 400
+
     remaining, state = availability(program, date)
     return jsonify({"ok": True, "remaining": remaining, "state": state})
+
 
 @app.route("/reserve", methods=["POST"])
 def reserve():
@@ -197,6 +217,7 @@ def reserve():
         return redirect(url_for("home") + "#reserve")
 
     remaining, state = availability(program, date)
+
     if state != "예약가능" or people > remaining:
         flash(f"현재 예약 가능한 인원은 {remaining}명입니다.")
         return redirect(url_for("home") + "#reserve")
@@ -221,27 +242,37 @@ def reserve():
     flash("예약 신청이 접수되었습니다. 관리자 확인 후 확정됩니다.")
     return redirect(url_for("home") + "#reserve")
 
+
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
-        if request.form.get("username") == ADMIN_USER and request.form.get("password") == ADMIN_PASSWORD:
+        if (
+            request.form.get("username") == ADMIN_USER
+            and request.form.get("password") == ADMIN_PASSWORD
+        ):
             session["admin"] = True
             return redirect(url_for("admin"))
+
         flash("아이디 또는 비밀번호가 올바르지 않습니다.")
+
     return render_template("login.html")
+
 
 @app.route("/admin/logout")
 def admin_logout():
     session.clear()
     return redirect(url_for("admin_login"))
 
+
 def require_admin():
     return session.get("admin") is True
+
 
 @app.route("/admin")
 def admin():
     if not require_admin():
         return redirect(url_for("admin_login"))
+
     con = db()
     bookings = con.execute(
         "SELECT * FROM bookings ORDER BY date ASC, created_at DESC"
@@ -250,12 +281,14 @@ def admin():
         "SELECT * FROM schedule ORDER BY date ASC, program ASC"
     ).fetchall()
     con.close()
+
     return render_template(
         "admin.html",
         bookings=bookings,
         schedules=schedules,
         programs=PROGRAMS,
     )
+
 
 @app.route("/admin/booking/<int:bid>/<status>", methods=["POST"])
 def set_booking_status(bid, status):
@@ -286,7 +319,6 @@ def set_booking_status(bid, status):
     con.commit()
     con.close()
 
-    # 같은 상태 버튼을 반복해서 눌렀을 때 중복 문자를 보내지 않습니다.
     if status != old_status and status in ("예약확정", "취소"):
         send_customer_status_sms(
             booking["phone"],
@@ -297,10 +329,12 @@ def set_booking_status(bid, status):
 
     return redirect(url_for("admin"))
 
+
 @app.route("/admin/schedule", methods=["POST"])
 def set_schedule():
     if not require_admin():
         return redirect(url_for("admin_login"))
+
     program = request.form.get("program")
     date = request.form.get("date")
     capacity = request.form.get("capacity", type=int)
@@ -327,6 +361,7 @@ def set_schedule():
 
     flash("운항 설정이 저장되었습니다.")
     return redirect(url_for("admin"))
+
 
 init_db()
 

@@ -55,6 +55,15 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
 <label>예약 인원</label><input id="people" name="people" type="number" min="1" value="1" required>
 <label>예약자 이름</label><input name="name" type="text" required>
 <label>휴대전화번호</label><input name="phone" type="tel" inputmode="numeric" placeholder="01012345678" required>
+<label>입금 방법</label>
+<select name="payment_type" id="paymentType" required>
+<option value="5만원 선입금">예약금 50,000원 선입금</option>
+<option value="전액 입금">예약금 전액 입금</option>
+</select>
+<div style="margin-top:12px;padding:14px;background:#fff8e8;border:1px solid #f1d48d;border-radius:12px">
+<b>입금하실 금액</b><div id="payAmount" style="font-size:22px;font-weight:900;color:#a56200;margin:7px 0">50,000원</div>
+<b>{{bank_name}} {{bank_account}}</b><br>예금주 {{bank_holder}}
+<div style="font-size:12px;margin-top:7px;color:#76664b">입금 확인 후 예약확정 안내를 보내드립니다.</div></div>
 <div class="privacy"><b>개인정보 수집·이용 안내</b><br>수집항목: 이름, 휴대전화번호, 예약일, 체험 종류, 인원<br>이용목적: 예약 접수·확정·취소 안내 및 예약 관리</div>
 <label class="agree"><input type="checkbox" required><span>개인정보 수집·이용에 동의합니다. (필수)</span></label>
 <button class="submit" type="submit">예약 신청하기</button>
@@ -62,6 +71,27 @@ label{display:block;font-weight:800;margin:13px 0 7px}select,input{width:100%;pa
 </div>
 </section>
 </main>
+
+
+<footer style="margin-top:40px; padding:25px 15px; background:#f5f5f5; color:#666; font-size:13px; line-height:1.8; text-align:center;">
+  <div><strong>헌터호</strong></div>
+  <div>대표자 : 김경환</div>
+  <div>사업자등록번호 : 158-36-01705</div>
+  <div>주소 : 경기도 안산시 상록구 구룡로5길 14-4 204호</div>
+  <div>예약문의 : 010-2003-0359</div>
+
+  <div style="margin-top:15px; padding:12px; background:#fff; border-radius:10px; color:#666;">
+    <strong>예약금 · 취소 · 환불 안내</strong><br>
+    예약은 예약금 입금 확인 후 확정됩니다.<br>
+    예약 시 50,000원 선입금 또는 전액 입금을 선택할 수 있습니다.<br>
+    기상악화 및 안전상 운항이 불가능한 경우 예약금은 전액 환불됩니다.<br>
+    고객 사정으로 인한 취소·변경은 예약문의 또는 카카오톡으로 문의해주세요.
+  </div>
+
+  <div style="margin-top:15px;">
+    © 헌터호. All Rights Reserved.
+  </div>
+</footer>
 
 <nav class="bottom"><a href="tel:01020030359">☎️<br>전화</a><a class="kakao" href="http://pf.kakao.com/_rkNSX/chat">💬<br>카카오톡</a><a class="band" href="https://band.us/n/a1afb9D482Ads">B<br>밴드</a><a class="reserve" href="#reserve">📅<br>예약</a></nav>
 
@@ -97,6 +127,9 @@ document.getElementById('prev').onclick=()=>{view=new Date(view.getFullYear(),vi
 document.getElementById('next').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);load()}
 program.onchange=()=>{dateInput.value='';remaining.textContent='달력에서 날짜를 선택해주세요.';load()}
 dateInput.onchange=()=>{availability();let p=dateInput.value.split('-');if(p.length===3){view=new Date(+p[0],+p[1]-1,1);load()}}
+const paymentType=document.getElementById('paymentType'),payAmount=document.getElementById('payAmount');
+function updatePay(){const prices={'주간체험':100000,'야간체험':80000,'선셋체험':250000};let total=program.value==='선셋체험'?250000:prices[program.value]*Math.max(1,Number(people.value||1));let amount=paymentType.value==='5만원 선입금'?50000:total;payAmount.textContent=amount.toLocaleString()+'원'}
+paymentType.addEventListener('change',updatePay);people.addEventListener('input',updatePay);program.addEventListener('change',updatePay);updatePay();
 load()
 </script>
 </body>

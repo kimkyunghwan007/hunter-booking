@@ -9,45 +9,44 @@
     *{box-sizing:border-box}html{scroll-behavior:smooth}
     body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",sans-serif;background:#f3f6f9;color:#172332;padding-bottom:82px}
     a{text-decoration:none;color:inherit}
-    .hero{background:linear-gradient(155deg,#061b30 0%,#0b4169 65%,#146a8a 100%);color:#fff;padding:42px 20px 35px;text-align:center}
-    .eyebrow{font-size:13px;font-weight:700;letter-spacing:.1em;opacity:.78}
-    .hero h1{font-size:38px;margin:7px 0 3px;letter-spacing:-.04em}
-    .hero p{margin:0 0 22px;color:#d9e8f3;font-size:15px}
-    .hero .cta{display:inline-block;background:#f3b84b;color:#142232;font-weight:900;padding:14px 26px;border-radius:999px;box-shadow:0 7px 20px rgba(0,0,0,.18)}
+    .hero{background:#08243d;color:#fff;text-align:center;overflow:hidden}
+    .hero img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover}
+    .heroOverlay{padding:18px 20px 24px;background:linear-gradient(180deg,#0b314f,#08243d)}
+    .eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;opacity:.8}
+    .heroOverlay h1{font-size:32px;margin:5px 0 3px}
+    .heroOverlay p{margin:0 0 17px;color:#d9e8f3;font-size:15px}
+    .cta{display:inline-block;background:#f3b84b;color:#142232;font-weight:900;padding:13px 24px;border-radius:999px}
     main{max-width:680px;margin:auto;padding:18px}
-    .title{font-size:22px;margin:17px 0 12px;letter-spacing:-.03em}
-    .sub{margin:-5px 0 14px;color:#687788;font-size:14px}
-    .cards{display:grid;gap:11px}
-    .card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 22px rgba(19,48,75,.08);border:1px solid #edf1f5}
+    .title{font-size:22px;margin:17px 0 12px}.sub{margin:-5px 0 14px;color:#687788;font-size:14px}
+    .cards{display:grid;gap:11px}.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 22px rgba(19,48,75,.08);border:1px solid #edf1f5}
     .program{display:flex;align-items:center;justify-content:space-between;gap:14px}
     .program h3{margin:0 0 5px;font-size:19px}.program p{margin:0;color:#657486;font-size:14px}
-    .price{text-align:right;font-size:17px;font-weight:900;color:#0a4d7d;white-space:nowrap}
-    .price small{display:block;font-size:11px;font-weight:650;color:#7b8794;margin-top:2px}
+    .price{text-align:right;font-size:17px;font-weight:900;color:#0a4d7d;white-space:nowrap}.price small{display:block;font-size:11px;color:#7b8794}
     .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 21px}
-    .quick a{padding:15px 8px;text-align:center;border-radius:14px;font-weight:900;box-shadow:0 5px 17px rgba(19,48,75,.08)}
+    .quick a{padding:15px 8px;text-align:center;border-radius:14px;font-weight:900}
     .kakao{background:#fee500!important;color:#191919!important}.band{background:#20c75a!important;color:#fff!important}
     label{display:block;font-weight:800;margin:14px 0 7px;font-size:14px}
-    select,input{width:100%;padding:14px;border:1px solid #d5dde6;border-radius:12px;background:#fff;font-size:16px;color:#172332;outline:none}
-    select:focus,input:focus{border-color:#17689d;box-shadow:0 0 0 3px rgba(23,104,157,.1)}
+    select,input{width:100%;padding:14px;border:1px solid #d5dde6;border-radius:12px;background:#fff;font-size:16px}
     .remaining{margin:10px 0 3px;padding:12px 13px;border-radius:11px;background:#edf6fd;color:#0a578c;font-size:14px;font-weight:800}
     .flash{background:#fff4ce;border:1px solid #f4d77b;padding:13px;border-radius:11px;margin-bottom:12px;font-weight:700}
     .privacy{margin-top:16px;padding:14px;background:#f6f8fa;border-radius:12px;font-size:12px;line-height:1.65;color:#536171}
-    .agree{display:flex;gap:9px;align-items:flex-start;margin:13px 0 2px;font-size:14px}
-    .agree input{width:20px;height:20px;margin:0;flex:none}
-    .submit{width:100%;border:0;background:#0a3c62;color:#fff;padding:17px;border-radius:13px;font-size:17px;font-weight:900;margin-top:15px;cursor:pointer}
-    .submit:disabled{opacity:.55}
+    .agree{display:flex;gap:9px;align-items:flex-start;margin:13px 0 2px;font-size:14px}.agree input{width:20px;height:20px;margin:0;flex:none}
+    .submit{width:100%;border:0;background:#0a3c62;color:#fff;padding:17px;border-radius:13px;font-size:17px;font-weight:900;margin-top:15px}
     .guide{margin-top:14px;padding:13px;border-left:4px solid #f3b84b;background:#fffaf0;border-radius:7px 11px 11px 7px;color:#5d6670;font-size:13px;line-height:1.65}
     .footer{text-align:center;color:#8a96a2;font-size:12px;padding:25px 0 5px}
-    .bottom{position:fixed;z-index:20;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #dde4ea;box-shadow:0 -4px 16px rgba(0,0,0,.07);padding-bottom:env(safe-area-inset-bottom)}
+    .bottom{position:fixed;z-index:20;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #dde4ea;box-shadow:0 -4px 16px rgba(0,0,0,.07)}
     .bottom a{padding:12px 3px 10px;text-align:center;font-size:12px;font-weight:900;line-height:1.25}.bottom .reserve{background:#0a3c62;color:#fff}
   </style>
 </head>
 <body>
 <header class="hero">
-  <div class="eyebrow">거북섬 마리나 · HUNTER BOAT</div>
-  <h1>⚓ 헌터호</h1>
-  <p>가까운 바다에서 즐기는 특별한 하루</p>
-  <a class="cta" href="#reserve">예약 가능일 확인하기</a>
+  <img src="/hunter-main.png" alt="거북섬 마리나 헌터호">
+  <div class="heroOverlay">
+    <div class="eyebrow">거북섬 마리나 · HUNTER BOAT</div>
+    <h1>⚓ 헌터호</h1>
+    <p>가까운 바다에서 즐기는 특별한 하루</p>
+    <a class="cta" href="#reserve">예약 가능일 확인하기</a>
+  </div>
 </header>
 
 <main>
@@ -55,18 +54,9 @@
   <p class="sub">원하시는 체험과 날짜를 선택해 예약하세요.</p>
 
   <div class="cards">
-    <div class="card program">
-      <div><h3>☀️ 주간체험</h3><p>낮 시간에 여유롭게 즐기는 바다 체험</p></div>
-      <div class="price">100,000원<small>1인</small></div>
-    </div>
-    <div class="card program">
-      <div><h3>🌙 야간체험</h3><p>밤바다의 분위기와 함께하는 체험</p></div>
-      <div class="price">80,000원<small>1인</small></div>
-    </div>
-    <div class="card program">
-      <div><h3>🌅 선셋체험</h3><p>시화호 노을과 함께하는 특별한 시간</p></div>
-      <div class="price">250,000원<small>4인 기준</small></div>
-    </div>
+    <div class="card program"><div><h3>☀️ 주간체험</h3><p>낮 시간에 여유롭게 즐기는 바다 체험</p></div><div class="price">100,000원<small>1인</small></div></div>
+    <div class="card program"><div><h3>🌙 야간체험</h3><p>밤바다의 분위기와 함께하는 체험</p></div><div class="price">80,000원<small>1인</small></div></div>
+    <div class="card program"><div><h3>🌅 선셋체험</h3><p>시화호 노을과 함께하는 특별한 시간</p></div><div class="price">250,000원<small>4인 기준</small></div></div>
   </div>
 
   <div class="quick">
@@ -82,7 +72,7 @@
         {% if messages %}<div class="flash">{{ messages[0] }}</div>{% endif %}
       {% endwith %}
 
-      <form method="post" action="/reserve" id="reserveForm">
+      <form method="post" action="/reserve">
         <label for="program">체험 선택</label>
         <select id="program" name="program" required>
           {% for name, info in programs.items() %}
@@ -98,17 +88,16 @@
         <input id="people" name="people" type="number" min="1" max="8" value="1" required>
 
         <label for="name">예약자 이름</label>
-        <input id="name" name="name" type="text" maxlength="30" placeholder="이름을 입력해주세요" autocomplete="name" required>
+        <input id="name" name="name" type="text" maxlength="30" placeholder="이름을 입력해주세요" required>
 
         <label for="phone">휴대전화번호</label>
-        <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="01012345678" maxlength="13" autocomplete="tel" required>
+        <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="01012345678" maxlength="13" required>
 
         <div class="privacy">
           <b>개인정보 수집·이용 안내</b><br>
           수집항목: 이름, 휴대전화번호, 예약일, 체험 종류, 인원<br>
           이용목적: 예약 접수·확정·취소 안내 및 예약 관리<br>
-          보유기간: 예약 업무 종료 후 관련 법령 및 운영상 필요한 기간 동안 보관 후 파기<br>
-          필수정보 수집에 동의하지 않으면 온라인 예약 신청이 어렵습니다.
+          보유기간: 예약 업무 종료 후 관련 법령 및 운영상 필요한 기간 동안 보관 후 파기
         </div>
 
         <label class="agree">
@@ -138,13 +127,13 @@
 </nav>
 
 <script>
-  const program = document.getElementById('program');
-  const date = document.getElementById('date');
-  const people = document.getElementById('people');
-  const remaining = document.getElementById('remaining');
+  const program=document.getElementById('program');
+  const date=document.getElementById('date');
+  const people=document.getElementById('people');
+  const remaining=document.getElementById('remaining');
 
-  const now = new Date();
-  date.min = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().split('T')[0];
+  const now=new Date();
+  date.min=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().split('T')[0];
 
   async function checkAvailability(){
     if(!program.value || !date.value){
@@ -155,10 +144,12 @@
     try{
       const res=await fetch('/api/availability?program='+encodeURIComponent(program.value)+'&date='+encodeURIComponent(date.value));
       const data=await res.json();
+
       if(!data.ok){
         remaining.textContent=data.message || '예약 가능 여부를 확인할 수 없습니다.';
         return;
       }
+
       if(data.state==='예약가능'){
         remaining.textContent='✅ 예약 가능 · 잔여 '+data.remaining+'명';
         people.max=Math.max(1,data.remaining);
@@ -170,6 +161,7 @@
       remaining.textContent='예약 가능 여부를 확인할 수 없습니다.';
     }
   }
+
   program.addEventListener('change',checkAvailability);
   date.addEventListener('change',checkAvailability);
 </script>

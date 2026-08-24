@@ -135,11 +135,17 @@ function programLine(dt,program,cssClass){
   const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);
   const state=custom?custom.state:'예약가능';
   const label=program.replace('체험','');
+  const remaining=Math.max(0,capacity-reserved);
 
-  if(state==='운항없음') return `<div class="mini offmini">${label} 운항없음</div>`;
-  if(state==='예약마감'||reserved>=capacity) return `<div class="mini ${cssClass} fullmini">${label} ${reserved}/${capacity} 마감</div>`;
-  if(reserved>0) return `<div class="mini ${cssClass}">${label} ${reserved}/${capacity}명</div>`;
-  return '';
+  if(state==='운항없음'){
+    return `<div class="mini offmini">${label} 운항없음</div>`;
+  }
+
+  if(state==='예약마감' || remaining===0){
+    return `<div class="mini ${cssClass} fullmini">${label} 마감</div>`;
+  }
+
+  return `<div class="mini ${cssClass}">${label} 잔여 ${remaining}명</div>`;
 }
 
 function drawCalendar(){
@@ -183,7 +189,14 @@ function selectDay(dt){
     const custom=scheduleInfo[key]||null;
     const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);
     const state=custom?custom.state:'예약가능';
-    lines.push(`${program}: ${reserved}/${capacity}명 · ${state}`);
+    const remaining=Math.max(0,capacity-reserved);
+    if(state==='운항없음'){
+      lines.push(`${program}: 운항없음`);
+    }else if(state==='예약마감' || remaining===0){
+      lines.push(`${program}: 마감`);
+    }else{
+      lines.push(`${program}: 예약 ${reserved}명 · 잔여 ${remaining}명`);
+    }
   }
 
   summary.innerHTML=`<b>${dt} 예약 현황</b><div>${lines.join('<br>')}</div><div>예약자 ${count}건</div>`;

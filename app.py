@@ -68,6 +68,7 @@ def init_db():
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_type TEXT")
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_amount INTEGER")
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS total_amount INTEGER")
+    con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS admin_note TEXT")
 
     # 기존에 야간체험 정원이 8명으로 저장된 날짜는 6명으로 자동 수정
     con.execute("""
@@ -320,6 +321,34 @@ def set_status(bid, status):
                 f"[헌터호 예약취소]\n{booking['date']} {booking['program']}\n예약이 취소되었습니다."
             )
 
+    return redirect(url_for("admin"))
+
+@app.route("/admin/booking/<int:bid>/note", methods=["POST"])
+def save_booking_note(bid):
+    if not require_admin():
+        return redirect(url_for("admin_login"))
+
+    note = request.form.get("admin_note", "").strip()
+
+    con = db()
+    booking = con.execute(
+        "SELECT id FROM bookings WHERE id=%s",
+        (bid,),
+    ).fetchone()
+
+    if not booking:
+        con.close()
+        flash("예약 정보를 찾을 수 없습니다.")
+        return redirect(url_for("admin"))
+
+    con.execute(
+        "UPDATE bookings SET admin_note=%s WHERE id=%s",
+        (note, bid),
+    )
+    con.commit()
+    con.close()
+
+    flash("관리자 메모가 저장되었습니다.")
     return redirect(url_for("admin"))
 
 @app.route("/admin/schedule", methods=["POST"])

@@ -18,7 +18,7 @@ h2{font-size:21px;margin:8px 0 12px}
 label{display:block;font-weight:800;font-size:14px;margin:12px 0 6px}
 input,select{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px;background:white;font-size:16px}
 .gold{width:100%;border:0;background:#d9a936;color:#172332;padding:14px;border-radius:11px;font-weight:900;font-size:16px;margin-top:14px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.actions form{margin:0}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.actions form{margin:0}
 .actions button{width:100%;padding:11px;border:0;border-radius:9px;background:#0b2945;color:white;font-weight:800}
 .actions .muted{background:#e7ecf1;color:#172332}
 .status{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#eaf5ef;color:#147044;font-size:12px;font-weight:800}
@@ -126,9 +126,17 @@ input,select{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px
       <b>{{b.date}} · {{b.program}}</b><br>
       {{b.name}} · {{b.people}}명 · {{b.phone}}<br>
       <span class="status">{{b.status}}</span>
+<div style="margin-top:9px;padding:10px;background:#fff8e8;border-radius:9px;font-size:13px">
+<b>입금:</b> {{b.payment_type or '기존 예약'}}{% if b.payment_amount %} · {{'{:,}'.format(b.payment_amount)}}원{% endif %}
+{% if b.total_amount %}<br><b>총 이용금액:</b> {{'{:,}'.format(b.total_amount)}}원{% endif %}
+</div>
 
       <div class="actions">
-        <form method="post" action="/admin/booking/{{b.id}}/예약확정">
+        <form method="post" action="/admin/booking/{{b.id}}/입금확인">
+<button style="background:#16734a">입금확인</button>
+</form>
+
+<form method="post" action="/admin/booking/{{b.id}}/예약확정">
           <button>예약확정</button>
         </form>
         <form method="post" action="/admin/booking/{{b.id}}/취소">

@@ -182,7 +182,7 @@ def availability(program, date):
     return remaining, "예약가능"
 
 
-@app.route("/hunter-main.png")
+@@app.route("/hunter-main.png")
 def hunter_main_image():
     return send_from_directory(app.root_path, "hunter-main-1.png")
 

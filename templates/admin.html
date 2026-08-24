@@ -14,13 +14,17 @@ h2{font-size:21px;margin:10px 0 12px}
 .card{background:#fff;border-radius:17px;padding:16px;margin:10px 0;box-shadow:0 5px 18px rgba(15,43,68,.08);border:1px solid #e6edf2}
 .flash{background:#fff3cd;border:1px solid #efd673;padding:13px;border-radius:11px;font-weight:800}
 label{display:block;font-weight:800;font-size:14px;margin:12px 0 6px}
-input,select{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px;background:#fff;font-size:16px}
+input,select,textarea{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px;background:#fff;font-size:16px;font-family:inherit}
+textarea{min-height:82px;resize:vertical}
 .gold{width:100%;border:0;background:#d9a936;padding:14px;border-radius:11px;font-weight:900;margin-top:14px}
 .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
 .actions form{margin:0}.actions button{width:100%;padding:10px 3px;border:0;border-radius:9px;background:#0b2945;color:#fff;font-weight:800}
 .actions .paid{background:#16734a}.actions .muted{background:#e7ecf1;color:#172332}
 .status{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#eaf5ef;color:#147044;font-size:12px;font-weight:800}
 .pay{margin-top:9px;padding:10px;background:#fff8e8;border-radius:9px;font-size:13px;line-height:1.55}
+.noteBox{margin-top:10px;padding:11px;background:#f6f8fb;border:1px solid #e1e7ee;border-radius:11px}
+.noteBox label{margin-top:0}
+.noteBtn{width:100%;margin-top:8px;border:0;border-radius:9px;padding:10px;background:#5b6470;color:#fff;font-weight:900}
 .calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .calhead button{border:0;background:#e9eef3;border-radius:10px;padding:10px 14px;font-size:19px;font-weight:900}
 .calmonth{font-weight:900;font-size:19px}
@@ -81,11 +85,21 @@ input,select{width:100%;padding:13px;border:1px solid #d5dde6;border-radius:11px
 <b>{{b.date}} · {{b.program}}</b><br>
 {{b.name}} · {{b.people}}명 · {{b.phone}}<br>
 <span class="status">{{b.status}}</span>
+
 <div class="pay">
 <b>입금:</b> {{b.payment_type or '기존 예약'}}
 {% if b.payment_amount %} · {{'{:,}'.format(b.payment_amount)}}원{% endif %}
 {% if b.total_amount %}<br><b>총 이용금액:</b> {{'{:,}'.format(b.total_amount)}}원{% endif %}
 </div>
+
+<div class="noteBox">
+<form method="post" action="/admin/booking/{{b.id}}/note">
+<label>📝 관리자 메모</label>
+<textarea name="admin_note" maxlength="500" placeholder="예: 낚싯대 2대 대여, 초보 3명, 잔금 현장결제">{{b.admin_note or ''}}</textarea>
+<button class="noteBtn" type="submit">메모 저장</button>
+</form>
+</div>
+
 <div class="actions">
 <form method="post" action="/admin/booking/{{b.id}}/입금확인"><button class="paid">입금확인</button></form>
 <form method="post" action="/admin/booking/{{b.id}}/예약확정"><button>예약확정</button></form>
@@ -140,11 +154,9 @@ function programLine(dt,program,cssClass){
   if(state==='운항없음'){
     return `<div class="mini offmini">${label} 운항없음</div>`;
   }
-
   if(state==='예약마감' || remaining===0){
     return `<div class="mini ${cssClass} fullmini">${label} 마감</div>`;
   }
-
   return `<div class="mini ${cssClass}">${label} 잔여 ${remaining}명</div>`;
 }
 
@@ -190,6 +202,7 @@ function selectDay(dt){
     const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);
     const state=custom?custom.state:'예약가능';
     const remaining=Math.max(0,capacity-reserved);
+
     if(state==='운항없음'){
       lines.push(`${program}: 운항없음`);
     }else if(state==='예약마감' || remaining===0){

@@ -19,8 +19,8 @@ SOLAPI_API_SECRET = os.environ.get("SOLAPI_API_SECRET")
 SOLAPI_FROM = os.environ.get("SOLAPI_FROM")
 ADMIN_PHONE = os.environ.get("ADMIN_PHONE")
 
-BANK_NAME = "카카오페이증권"
-BANK_ACCOUNT = "020-04-261519"
+BANK_NAME = "토스뱅크"
+BANK_ACCOUNT = "1002-3983-0407"
 BANK_HOLDER = "김경환"
 
 PROGRAMS = {

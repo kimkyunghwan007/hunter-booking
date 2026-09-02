@@ -10,7 +10,7 @@ from solapi.model import RequestMessage
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-secret-key-before-deploy")
 
-ADMIN_ID = os.environ.get("ADMIN_ID", "admin")
+ADMIN_ID = os.environ.get("ADMIN_USER", "admin")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "hunter1234")
 SOLAPI_API_KEY = os.environ.get("SOLAPI_API_KEY")
 SOLAPI_API_SECRET = os.environ.get("SOLAPI_API_SECRET")

@@ -1,18 +1,26 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
+
 <meta name="naver-site-verification" content="1455c0baa816638b36828c08070ff77ab9b8b531" />
 <meta name="google-site-verification" content="RNMWq0BlzP6qsRrAnKXM-yy0o4b7EX5oy3dyqjlDiao" />
+
 <meta charset="utf-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 
 <title>거북섬 헌터호 예약</title>
 
 <meta name="description" content="거북섬 마리나 헌터호 예약 홈페이지. 선셋·선라이즈 체험과 다양한 프로그램 예약 및 이용 안내.">
+
 <meta name="keywords" content="거북섬 헌터호, 헌터호, 거북섬 마리나, 거북섬 체험, 시화호 체험, 헌터호 예약">
 
+
 <style>
+
 *{box-sizing:border-box}
+
 html{scroll-behavior:smooth}
 
 body{
@@ -168,7 +176,6 @@ font-weight:900;
 margin-top:14px
 }
 
-/* 예약 처리 중 버튼 */
 .submit:disabled{
 background:#758594;
 opacity:.85;
@@ -246,7 +253,9 @@ border:0;
 background:transparent
 }
 
-.dnum{font-weight:900}
+.dnum{
+font-weight:900
+}
 
 .dstate{
 font-size:10px;
@@ -255,8 +264,11 @@ font-weight:800
 }
 
 .available .dstate{color:#13854b}
+
 .low .dstate{color:#d27a00}
+
 .closed .dstate{color:#c53b3b}
+
 .past{opacity:.35}
 
 .selected{
@@ -327,71 +339,165 @@ font-weight:900
 background:#0a3c62!important;
 color:white!important
 }
+
+.paymentBox{
+margin-top:12px;
+padding:14px;
+background:#fff8e8;
+border:1px solid #f1d48d;
+border-radius:12px
+}
+
+.payAmount{
+font-size:22px;
+font-weight:900;
+color:#a56200;
+margin:7px 0
+}
+
+.payNote{
+font-size:12px;
+margin-top:7px;
+color:#76664b
+}
+
 </style>
+
 </head>
 
+
 <body>
+
 
 <header class="hero">
 
 <img src="/hunter-main.png" alt="헌터호">
 
 <div class="heroText">
-<div>거북섬 마리나 · HUNTER BOAT</div>
+
+<div>
+거북섬 마리나 · HUNTER BOAT
+</div>
+
 <h1>⚓ 헌터호</h1>
-<p>가까운 바다에서 즐기는 특별한 하루</p>
-<a class="cta" href="#reserve">예약 가능일 확인하기</a>
+
+<p>
+가까운 바다에서 즐기는 특별한 하루
+</p>
+
+<a class="cta" href="#reserve">
+예약 가능일 확인하기
+</a>
+
 </div>
 
 </header>
 
+
 <main>
 
-<h2 class="title">체험 프로그램</h2>
+
+<h2 class="title">
+체험 프로그램
+</h2>
+
 
 <div class="card program">
+
 <div>
-<h3>☀️ 주간체험</h3>
-<p>쭈꾸미 · 갑오징어 체험</p>
+
+<h3>
+☀️ 주간체험
+</h3>
+
+<p>
+쭈꾸미 · 갑오징어 체험
+</p>
+
 </div>
+
 <div class="price">
+
 100,000원
-<small>1인</small>
-</div>
+
+<small>
+1인
+</small>
+
 </div>
 
-<div class="card program">
-<div>
-<h3>🌙 야간체험</h3>
-<p>장어 · 꽃게 체험</p>
 </div>
+
+
+<div class="card program">
+
+<div>
+
+<h3>
+🌙 야간체험
+</h3>
+
+<p>
+장어 · 꽃게 체험
+</p>
+
+</div>
+
 <div class="price">
+
 80,000원
-<small>1인</small>
-</div>
+
+<small>
+1인
+</small>
+
 </div>
 
+</div>
+
+
 <div class="card program">
+
 <div>
-<h3>🌅 선셋체험</h3>
-<p>노을과 함께하는 체험</p>
+
+<h3>
+🌅 선셋체험
+</h3>
+
+<p>
+노을과 함께하는 체험
+</p>
+
 </div>
+
 <div class="price">
+
 250,000원
-<small>4인 기준</small>
+
+<small>
+4인 기준
+</small>
+
 </div>
+
 </div>
+
 
 <div class="quick">
 
 <a class="kakao"
 href="http://pf.kakao.com/_rkNSX/chat">
+
 💬 카카오톡 문의
+
 </a>
+
 
 <a class="band"
 href="https://band.us/n/a1afb9D482Ads">
+
 B 네이버 밴드
+
 </a>
 
 </div>
@@ -399,35 +505,66 @@ B 네이버 밴드
 
 <section id="reserve">
 
-<h2 class="title">예약 가능 달력</h2>
+
+<h2 class="title">
+예약 가능 달력
+</h2>
+
 
 <p class="sub">
 체험을 선택하면 날짜별 빈자리가 표시됩니다.
 </p>
 
+
 <div class="card">
 
-<label>체험 선택</label>
+
+<label>
+체험 선택
+</label>
+
 
 <select id="program">
+
 {% for name, info in programs.items() %}
-<option value="{{ name }}">{{ name }}</option>
+
+<option value="{{ name }}">
+{{ name }}
+</option>
+
 {% endfor %}
+
 </select>
 
-<div id="programInfo" class="infoBox"></div>
+
+<div id="programInfo"
+class="infoBox">
+</div>
+
 
 <div class="calhead">
 
-<button type="button" id="prev">‹</button>
+<button type="button"
+id="prev">
+‹
+</button>
 
-<div class="calmonth" id="monthTitle"></div>
 
-<button type="button" id="next">›</button>
+<div class="calmonth"
+id="monthTitle">
+</div>
+
+
+<button type="button"
+id="next">
+›
+</button>
 
 </div>
 
+
 <div class="week">
+
 <div>일</div>
 <div>월</div>
 <div>화</div>
@@ -435,52 +572,79 @@ B 네이버 밴드
 <div>목</div>
 <div>금</div>
 <div>토</div>
-</div>
-
-<div class="calendar" id="calendar"></div>
 
 </div>
 
 
-<h2 class="title">온라인 예약</h2>
+<div class="calendar"
+id="calendar">
+</div>
+
+
+</div>
+
+
+<h2 class="title">
+온라인 예약
+</h2>
+
 
 <div class="card">
 
+
 {% with messages = get_flashed_messages() %}
+
 {% if messages %}
+
 <div class="remaining">
 {{ messages[0] }}
 </div>
+
 {% endif %}
+
 {% endwith %}
 
 
-<form method="post"
+<form
+method="post"
 action="/reserve"
 id="reserveForm">
 
-<input type="hidden"
+
+<input
+type="hidden"
 name="program"
 id="programHidden">
 
 
-<label>예약 날짜</label>
+<label>
+예약 날짜
+</label>
 
-<input id="dateInput"
+
+<input
+id="dateInput"
 name="date"
 type="date"
 required>
 
 
-<div id="remaining"
+<div
+id="remaining"
 class="remaining">
+
 달력에서 날짜를 선택해주세요.
+
 </div>
 
 
-<label>예약 인원</label>
+<label>
+예약 인원
+</label>
 
-<input id="people"
+
+<input
+id="people"
 name="people"
 type="number"
 min="1"
@@ -488,94 +652,96 @@ value="1"
 required>
 
 
-<label>예약자 이름</label>
+<label>
+예약자 이름
+</label>
 
-<input name="name"
+
+<input
+name="name"
 type="text"
 required>
 
 
-<label>휴대전화번호</label>
+<label>
+휴대전화번호
+</label>
 
-<input name="phone"
+
+<input
+name="phone"
 type="tel"
 inputmode="numeric"
 placeholder="01012345678"
 required>
 
 
-<label>입금 방법</label>
+<label>
+결제 방법
+</label>
 
-<select name="payment_type"
+
+<select
+name="payment_type"
 id="paymentType"
 required>
 
-<option value="5만원 선입금">
-예약금 50,000원 선입금
+<option value="현장결제">
+현장결제
 </option>
 
 <option value="전액 입금">
-예약금 전액 입금
+전액 입금
 </option>
 
 </select>
 
 
-<div style="
-margin-top:12px;
-padding:14px;
-background:#fff8e8;
-border:1px solid #f1d48d;
-border-radius:12px">
+<div
+class="paymentBox"
+id="paymentBox">
 
-<b>입금하실 금액</b>
 
-<div id="payAmount"
-style="
-font-size:22px;
-font-weight:900;
-color:#a56200;
-margin:7px 0">
-
-50,000원
-
-</div>
-
-<b>
-{{bank_name}} {{bank_account}}
+<b id="paymentTitle">
+현장에서 결제하실 금액
 </b>
 
-<br>
 
-예금주 {{bank_holder}}
+<div
+id="payAmount"
+class="payAmount">
 
-<div style="
-font-size:12px;
-margin-top:7px;
-color:#76664b">
-
-입금 확인 후 예약확정 안내를 보내드립니다.
-<br>
-
-<strong>
-입금 시 날짜 + 예약자명으로 입금해주세요.
-</strong>
-
-<br>
-
-예) 8월25일 김경환
+100,000원
 
 </div>
+
+
+<div id="bankInfo">
+
+<strong>
+현장결제
+</strong>
+
+<div class="payNote">
+예약 후 현장에서 결제해주세요.
+</div>
+
+</div>
+
 
 </div>
 
 
 <div class="privacy">
 
-<b>개인정보 수집·이용 안내</b>
+<b>
+개인정보 수집·이용 안내
+</b>
+
 <br>
 
 수집항목: 이름, 휴대전화번호, 예약일, 체험 종류, 인원
+
 <br>
 
 이용목적: 예약 접수·확정·취소 안내 및 예약 관리
@@ -585,7 +751,9 @@ color:#76664b">
 
 <label class="agree">
 
-<input type="checkbox" required>
+<input
+type="checkbox"
+required>
 
 <span>
 개인정보 수집·이용에 동의합니다. (필수)
@@ -594,7 +762,6 @@ color:#76664b">
 </label>
 
 
-<!-- ★ 연타 방지 버튼 -->
 <button
 class="submit"
 id="submitBtn"
@@ -604,6 +771,7 @@ type="submit">
 
 </button>
 
+
 </form>
 
 </div>
@@ -611,179 +779,226 @@ type="submit">
 </section>
 
 
-<section id="directions"
+<section
+id="directions"
 style="margin-top:32px;">
+
 
 <h2>
 📍 오시는 길 · 무료 주차장 안내
 </h2>
 
-<div class="card"
+
+<div
+class="card"
 style="padding:16px;">
 
-<div style="
-font-weight:800;
-font-size:18px;
-margin-bottom:6px;">
+
+<div
+style="font-weight:800;font-size:18px;margin-bottom:6px;">
 
 거북섬 마리나
 
 </div>
 
-<div style="
-color:#667085;
-line-height:1.7;
-margin-bottom:14px;">
+
+<div
+style="color:#667085;line-height:1.7;margin-bottom:14px;">
 
 무료 주차장 : 거북섬로 111
+
 <br>
 
 주차 후 안내 경로를 따라 거북섬 마리나로 이동해주세요.
 
 </div>
 
+
 <img
 src="/parking.png"
 alt="거북섬 마리나 무료 주차장 안내"
-style="
-display:block;
-width:100%;
-height:auto;
-border-radius:14px;">
+style="display:block;width:100%;height:auto;border-radius:14px;">
 
 </div>
 
 </section>
 
+
 </main>
 
 
-<footer style="
-margin-top:40px;
-padding:25px 15px;
-background:#f5f5f5;
-color:#666;
-font-size:13px;
-line-height:1.8;
-text-align:center;">
+<footer
+style="margin-top:40px;padding:25px 15px;background:#f5f5f5;color:#666;font-size:13px;line-height:1.8;text-align:center;">
+
 
 <div>
-<strong>헌터호</strong>
+<strong>
+헌터호
+</strong>
 </div>
+
 
 <div>
 대표자 : 김경환
 </div>
 
+
 <div>
 사업자등록번호 : 158-36-01705
 </div>
 
+
 <div>
 주소 : 경기도 안산시 상록구 구룡로5길 14-4 204호
 </div>
+
 
 <div>
 예약문의 : 010-2003-0359
 </div>
 
 
-<div style="
-margin-top:15px;
-padding:12px;
-background:#fff;
-border-radius:10px;
-color:#666;">
+<div
+style="margin-top:15px;padding:12px;background:#fff;border-radius:10px;color:#666;">
+
 
 <strong>
-예약금 · 취소 · 환불 안내
+결제 · 취소 · 환불 안내
 </strong>
 
 <br>
 
-예약은 예약금 입금 확인 후 확정됩니다.
+예약 시 현장결제 또는 전액 입금을 선택할 수 있습니다.
 
 <br>
 
-예약 시 50,000원 선입금 또는 전액 입금을 선택할 수 있습니다.
+전액 입금을 선택한 경우 입금 확인 후 예약이 확정됩니다.
 
 <br>
 
-기상악화 및 안전상 운항이 불가능한 경우 예약금은 전액 환불됩니다.
+현장결제를 선택한 경우 이용 당일 현장에서 결제해주세요.
+
+<br>
+
+기상악화 및 안전상 운항이 불가능한 경우 선입금한 금액은 전액 환불됩니다.
 
 <br>
 
 고객 사정으로 인한 취소·변경은 예약문의 또는 카카오톡으로 문의해주세요.
 
+
 </div>
+
 
 <div style="margin-top:15px;">
 © 헌터호. All Rights Reserved.
 </div>
+
 
 </footer>
 
 
 <nav class="bottom">
 
+
 <a href="tel:01020030359">
+
 ☎️
 <br>
 전화
+
 </a>
 
-<a class="kakao"
+
+<a
+class="kakao"
 href="http://pf.kakao.com/_rkNSX/chat">
+
 💬
 <br>
 카카오톡
+
 </a>
 
-<a class="band"
+
+<a
+class="band"
 href="https://band.us/n/a1afb9D482Ads">
+
 B
 <br>
 밴드
+
 </a>
 
-<a class="reserve"
+
+<a
+class="reserve"
 href="#reserve">
+
 📅
 <br>
 예약
+
 </a>
+
 
 </nav>
 
 
 <script>
 
+
 const program =
 document.getElementById('program');
+
 
 const hidden =
 document.getElementById('programHidden');
 
+
 const dateInput =
 document.getElementById('dateInput');
+
 
 const people =
 document.getElementById('people');
 
+
 const remaining =
 document.getElementById('remaining');
+
 
 const cal =
 document.getElementById('calendar');
 
+
 const monthTitle =
 document.getElementById('monthTitle');
+
 
 const programInfo =
 document.getElementById('programInfo');
 
 
+const paymentType =
+document.getElementById('paymentType');
+
+
+const payAmount =
+document.getElementById('payAmount');
+
+
+const paymentTitle =
+document.getElementById('paymentTitle');
+
+
+const bankInfo =
+document.getElementById('bankInfo');
+
+
 const programGuide={
+
 
 '주간체험':{
 
@@ -799,6 +1014,7 @@ note:'기상 및 현장 상황에 따라 입항시간은 변동될 수 있습니
 
 },
 
+
 '야간체험':{
 
 title:'🌙 야간체험 · 장어 / 꽃게',
@@ -812,6 +1028,7 @@ prepare:'야간 체험에 맞는 편한 복장 권장',
 note:'기상 및 현장 상황에 따라 출·입항시간은 전후로 변동될 수 있습니다.'
 
 },
+
 
 '선셋체험':{
 
@@ -832,11 +1049,17 @@ note:'계절별 일몰시간과 기상상황에 따라 운항시간이 달라질
 
 function updateProgramInfo(){
 
-const g=programGuide[program.value];
+const g =
+programGuide[
+program.value
+];
+
 
 programInfo.innerHTML=`
 
-<h3>${g.title}</h3>
+<h3>
+${g.title}
+</h3>
 
 <div class="infoGrid">
 
@@ -871,16 +1094,19 @@ ${g.prepare}
 }
 
 
-const now=new Date();
+const now =
+new Date();
 
-let view=new Date(
+
+let view =
+new Date(
 now.getFullYear(),
 now.getMonth(),
 1
 );
 
 
-dateInput.min=
+dateInput.min =
 new Date(
 now.getTime()
 -
@@ -893,52 +1119,74 @@ now.getTimezoneOffset()*60000
 function mk(d){
 
 return d.getFullYear()
-+'-'
-+String(
++
+'-'
++
+String(
 d.getMonth()+1
-).padStart(2,'0');
+).padStart(
+2,
+'0'
+);
 
 }
 
 
 async function availability(){
 
-hidden.value=program.value;
+hidden.value =
+program.value;
+
 
 if(!dateInput.value){
 
-remaining.textContent=
+remaining.textContent =
 '달력에서 날짜를 선택해주세요.';
 
 return;
 
 }
 
-const r=
+
+const r =
 await fetch(
+
 '/api/availability?program='
+
 +
-encodeURIComponent(program.value)
+
+encodeURIComponent(
+program.value
+)
+
 +
+
 '&date='
+
 +
+
 dateInput.value
+
 );
 
-const d=
+
+const d =
 await r.json();
 
 
-if(d.state==='예약가능'){
+if(
+d.state === '예약가능'
+){
 
-remaining.textContent=
+remaining.textContent =
 '✅ 예약 가능 · 잔여 '
 +
 d.remaining
 +
 '명';
 
-people.max=
+
+people.max =
 Math.max(
 1,
 d.remaining
@@ -948,12 +1196,13 @@ d.remaining
 
 else{
 
-remaining.textContent=
+remaining.textContent =
 '⛔ '
 +
 d.state;
 
-people.max=1;
+
+people.max = 1;
 
 }
 
@@ -962,10 +1211,11 @@ people.max=1;
 
 async function load(){
 
-hidden.value=
+hidden.value =
 program.value;
 
-monthTitle.textContent=
+
+monthTitle.textContent =
 view.getFullYear()
 +
 '년 '
@@ -975,22 +1225,33 @@ view.getFullYear()
 '월';
 
 
-const r=
+const r =
 await fetch(
+
 '/api/calendar?program='
+
 +
-encodeURIComponent(program.value)
+
+encodeURIComponent(
+program.value
+)
+
 +
+
 '&month='
+
 +
+
 mk(view)
+
 );
 
-const d=
+
+const d =
 await r.json();
 
 
-const first=
+const first =
 new Date(
 view.getFullYear(),
 view.getMonth(),
@@ -1007,13 +1268,15 @@ i<first;
 i++
 ){
 
-h+=
+h +=
 '<div class="day blank"></div>';
 
 }
 
 
-for(const x of d.days){
+for(
+const x of d.days
+){
 
 let cls='day';
 
@@ -1022,58 +1285,65 @@ let txt='';
 let click='';
 
 
-if(x.state==='지난날짜'){
+if(
+x.state === '지난날짜'
+){
 
-cls+=' past';
+cls += ' past';
 
 }
 
+
 else if(
-x.state==='예약가능'
+x.state === '예약가능'
 ){
 
-cls+=
+cls +=
 ' '
 +
 (
-x.remaining<=2
+x.remaining <= 2
 ?
 'low'
 :
 'available'
 );
 
-txt=
+
+txt =
 '잔여 '
 +
 x.remaining
 +
 '명';
 
-click=
+
+click =
 `onclick="pick('${x.date}')"`;
 
 }
 
+
 else{
 
-cls+=' closed';
+cls += ' closed';
 
-txt=x.state;
+txt =
+x.state;
 
 }
 
 
 if(
-dateInput.value===x.date
+dateInput.value === x.date
 ){
 
-cls+=' selected';
+cls += ' selected';
 
 }
 
 
-h+=`
+h += `
 
 <div class="${cls}" ${click}>
 
@@ -1092,21 +1362,27 @@ ${txt}
 }
 
 
-cal.innerHTML=h;
+cal.innerHTML =
+h;
 
 }
 
 
 function pick(v){
 
-dateInput.value=v;
+dateInput.value =
+v;
+
 
 availability();
 
 load();
 
+
 document
-.getElementById('reserveForm')
+.getElementById(
+'reserveForm'
+)
 .scrollIntoView({
 behavior:'smooth'
 });
@@ -1115,10 +1391,12 @@ behavior:'smooth'
 
 
 document
-.getElementById('prev')
-.onclick=()=>{
+.getElementById(
+'prev'
+)
+.onclick = ()=>{
 
-view=
+view =
 new Date(
 view.getFullYear(),
 view.getMonth()-1,
@@ -1131,10 +1409,12 @@ load();
 
 
 document
-.getElementById('next')
-.onclick=()=>{
+.getElementById(
+'next'
+)
+.onclick = ()=>{
 
-view=
+view =
 new Date(
 view.getFullYear(),
 view.getMonth()+1,
@@ -1146,12 +1426,14 @@ load();
 };
 
 
-program.onchange=()=>{
+program.onchange = ()=>{
 
 dateInput.value='';
 
-remaining.textContent=
+
+remaining.textContent =
 '달력에서 날짜를 선택해주세요.';
+
 
 updateProgramInfo();
 
@@ -1162,18 +1444,20 @@ updatePay();
 };
 
 
-dateInput.onchange=()=>{
+dateInput.onchange = ()=>{
 
 availability();
 
-let p=
+
+let p =
 dateInput.value.split('-');
 
+
 if(
-p.length===3
+p.length === 3
 ){
 
-view=
+view =
 new Date(
 +p[0],
 +p[1]-1,
@@ -1187,14 +1471,8 @@ load();
 };
 
 
-const paymentType=
-document.getElementById('paymentType');
-
-const payAmount=
-document.getElementById('payAmount');
-
-
 function updatePay(){
+
 
 const prices={
 
@@ -1207,9 +1485,9 @@ const prices={
 };
 
 
-let total=
+let total =
 
-program.value==='선셋체험'
+program.value === '선셋체험'
 
 ?
 
@@ -1217,36 +1495,84 @@ program.value==='선셋체험'
 
 :
 
-prices[program.value]
+prices[
+program.value
+]
+
 *
+
 Math.max(
 1,
 Number(
-people.value||1
+people.value || 1
 )
 );
 
 
-let amount=
-
-paymentType.value==='5만원 선입금'
-
-?
-
-50000
-
-:
-
-total;
-
-
-payAmount.textContent=
-
-amount.toLocaleString()
-
+payAmount.textContent =
+total.toLocaleString()
 +
-
 '원';
+
+
+if(
+paymentType.value === '현장결제'
+){
+
+paymentTitle.textContent =
+'현장에서 결제하실 금액';
+
+
+bankInfo.innerHTML = `
+
+<strong>
+✅ 현장결제
+</strong>
+
+<div class="payNote">
+지금 입금하실 금액은 없습니다.<br>
+이용 당일 현장에서 ${total.toLocaleString()}원을 결제해주세요.
+</div>
+
+`;
+
+}
+
+else{
+
+paymentTitle.textContent =
+'지금 입금하실 금액';
+
+
+bankInfo.innerHTML = `
+
+<strong>
+{{bank_name}} {{bank_account}}
+</strong>
+
+<br>
+
+예금주 {{bank_holder}}
+
+<div class="payNote">
+
+입금 확인 후 예약확정 안내를 보내드립니다.
+
+<br>
+
+<strong>
+입금 시 날짜 + 예약자명으로 입금해주세요.
+</strong>
+
+<br>
+
+예) 8월25일 김경환
+
+</div>
+
+`;
+
+}
 
 }
 
@@ -1255,6 +1581,7 @@ paymentType.addEventListener(
 'change',
 updatePay
 );
+
 
 people.addEventListener(
 'input',
@@ -1269,25 +1596,35 @@ updatePay();
 load();
 
 
-/* =========================================
-   ★ 예약 버튼 연타 방지
-   ========================================= */
+
+/* =============================
+예약 버튼 연타 방지
+============================= */
+
 
 const reserveForm =
-document.getElementById('reserveForm');
+document.getElementById(
+'reserveForm'
+);
+
 
 const submitBtn =
-document.getElementById('submitBtn');
+document.getElementById(
+'submitBtn'
+);
 
-let submitting=false;
+
+let submitting =
+false;
 
 
 reserveForm.addEventListener(
 'submit',
 function(e){
 
-/* 이미 한번 전송했으면 추가 전송 차단 */
-if(submitting){
+if(
+submitting
+){
 
 e.preventDefault();
 
@@ -1295,22 +1632,21 @@ return false;
 
 }
 
-/* 브라우저 기본 required 검사 통과 후 실행 */
-submitting=true;
+
+submitting =
+true;
 
 
-/* 버튼 즉시 잠금 */
-submitBtn.disabled=true;
+submitBtn.disabled =
+true;
 
 
-/* 손님에게 처리 중이라는 것을 바로 표시 */
-submitBtn.textContent=
+submitBtn.textContent =
 '⏳ 예약 처리중...';
 
 
-/* 혹시 처리 시간이 조금 걸려도
-   다시 누를 필요 없다는 표시 */
-submitBtn.style.opacity='0.75';
+submitBtn.style.opacity =
+'0.75';
 
 
 return true;
@@ -1318,7 +1654,10 @@ return true;
 }
 );
 
+
 </script>
 
+
 </body>
+
 </html>

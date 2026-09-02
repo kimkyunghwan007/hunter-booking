@@ -218,7 +218,7 @@ def admin_login():
             session["admin"] = True
             return redirect(url_for("admin"))
         flash("아이디 또는 비밀번호가 틀렸습니다.")
-    return render_template("admin_login.html")
+    return render_template("login.html")
 
 @app.route("/admin/logout")
 def admin_logout():

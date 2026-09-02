@@ -212,12 +212,29 @@ def reserve():
     return redirect(url_for("home") + "#reserve")
 
 @app.route("/admin/login", methods=["GET", "POST"])
+@app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
-        if request.form.get("id") == ADMIN_ID and request.form.get("password") == ADMIN_PASSWORD:
+
+        user_id = (
+            request.form.get("id")
+            or request.form.get("username")
+            or request.form.get("user_id")
+            or ""
+        ).strip()
+
+        password = (
+            request.form.get("password")
+            or request.form.get("pw")
+            or ""
+        ).strip()
+
+        if user_id == ADMIN_ID and password == ADMIN_PASSWORD:
             session["admin"] = True
             return redirect(url_for("admin"))
+
         flash("아이디 또는 비밀번호가 틀렸습니다.")
+
     return render_template("login.html")
 
 @app.route("/admin/logout")

@@ -396,23 +396,24 @@ def total_price(
 
 
 # =========================
+# =========================
 # 이미지
 # =========================
 
-@app.route(
-    "/hunter-main.png"
-)
+@app.route("/hunter-main.png")
 def hunter_main():
-
     return send_from_directory(
-        "static",
-        "hunter-main.png"
+        ".",
+        "hunter-main-1.png"
     )
 
 
-@app.route(
-    "/parking.png"
-)
+@app.route("/parking.png")
+def parking():
+    return send_from_directory(
+        ".",
+        "parking.png"
+    )
 def parking():
 
     return send_from_directory(

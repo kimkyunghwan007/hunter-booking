@@ -70,6 +70,19 @@ def init_db():
         )
     """)
 
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS passengers (
+            id BIGSERIAL PRIMARY KEY,
+            boarding_date TEXT NOT NULL,
+            name TEXT NOT NULL,
+            birth_date TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            emergency_phone TEXT NOT NULL,
+            agreed BOOLEAN NOT NULL DEFAULT TRUE,
+            created_at TEXT NOT NULL
+        )
+    """)
+
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_type TEXT")
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_amount INTEGER")
     con.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS total_amount INTEGER")
@@ -247,13 +260,8 @@ def api_calendar():
     days = []
 
     for day_num in range(1, last_day + 1):
-
         dt = f"{year:04d}-{mon:02d}-{day_num:02d}"
-
-        remaining, state = availability(
-            program,
-            dt
-        )
+        remaining, state = availability(program, dt)
 
         days.append({
             "day": day_num,
@@ -267,7 +275,6 @@ def api_calendar():
 
 @app.route("/reserve", methods=["POST"])
 def reserve():
-
     program = request.form.get("program")
     dt = request.form.get("date")
     people = request.form.get("people", type=int)
@@ -288,10 +295,7 @@ def reserve():
         flash("예약정보를 모두 입력해주세요.")
         return redirect(url_for("home") + "#reserve")
 
-    remaining, state = availability(
-        program,
-        dt
-    )
+    remaining, state = availability(program, dt)
 
     if state != "예약가능" or people > remaining:
         flash(
@@ -313,7 +317,6 @@ def reserve():
     con = db()
 
     try:
-
         lock_key = (
             f"{program}|{dt}|{people}|{name}|{phone}"
         )
@@ -350,7 +353,6 @@ def reserve():
 
         if duplicate:
             con.rollback()
-
             flash(
                 "이미 예약이 접수되었습니다."
             )
@@ -401,9 +403,7 @@ def reserve():
         con.commit()
 
     except Exception as e:
-
         con.rollback()
-
         print(
             "예약 저장 실패:",
             e
@@ -420,7 +420,6 @@ def reserve():
     finally:
         con.close()
 
-
     sms(
         ADMIN_PHONE,
         f"[헌터호 새 예약]\n"
@@ -429,7 +428,6 @@ def reserve():
         f"{phone}\n"
         f"전액 입금 / {total:,}원"
     )
-
 
     sms(
         phone,
@@ -443,7 +441,6 @@ def reserve():
         "입금 확인 후 예약확정 안내드립니다."
     )
 
-
     flash(
         f"예약 접수 완료! "
         f"{BANK_NAME} {BANK_ACCOUNT} / "
@@ -456,14 +453,206 @@ def reserve():
     )
 
 
+# =========================
+# 온라인 승선명부
+# =========================
+
+@app.route("/passenger", methods=["GET", "POST"])
+def passenger():
+    if request.method == "GET":
+        return render_template(
+            "passenger.html",
+            prefill_date=request.args.get("date", "")
+        )
+
+    boarding_date = request.form.get("boarding_date", "").strip()
+    name = request.form.get("name", "").strip()
+    birth_date = request.form.get("birth_date", "").replace("-", "").replace(".", "").strip()
+    phone = request.form.get("phone", "").replace("-", "").strip()
+    emergency_phone = request.form.get("emergency_phone", "").replace("-", "").strip()
+    agree = request.form.get("agree") == "yes"
+
+    if not all([
+        boarding_date,
+        name,
+        birth_date,
+        phone,
+        emergency_phone,
+        agree
+    ]):
+        flash("승선자 정보를 모두 입력하고 동의해주세요.")
+        return redirect(
+            url_for("passenger", date=boarding_date)
+        )
+
+    try:
+        datetime.strptime(boarding_date, "%Y-%m-%d")
+    except Exception:
+        flash("승선일을 다시 확인해주세요.")
+        return redirect(url_for("passenger"))
+
+    if len(birth_date) != 8 or not birth_date.isdigit():
+        flash("생년월일은 8자리 숫자로 입력해주세요. 예: 19800101")
+        return redirect(
+            url_for("passenger", date=boarding_date)
+        )
+
+    if not phone.isdigit() or len(phone) < 10:
+        flash("연락처를 다시 확인해주세요.")
+        return redirect(
+            url_for("passenger", date=boarding_date)
+        )
+
+    if not emergency_phone.isdigit() or len(emergency_phone) < 10:
+        flash("비상연락처를 다시 확인해주세요.")
+        return redirect(
+            url_for("passenger", date=boarding_date)
+        )
+
+    con = db()
+
+    try:
+        duplicate = con.execute("""
+            SELECT id
+            FROM passengers
+            WHERE boarding_date = %s
+              AND name = %s
+              AND birth_date = %s
+              AND phone = %s
+            ORDER BY id DESC
+            LIMIT 1
+        """, (
+            boarding_date,
+            name,
+            birth_date,
+            phone
+        )).fetchone()
+
+        if duplicate:
+            con.close()
+            return render_template(
+                "passenger_done.html",
+                name=name
+            )
+
+        con.execute("""
+            INSERT INTO passengers(
+                boarding_date,
+                name,
+                birth_date,
+                phone,
+                emergency_phone,
+                agreed,
+                created_at
+            )
+            VALUES(%s,%s,%s,%s,%s,%s,%s)
+        """, (
+            boarding_date,
+            name,
+            birth_date,
+            phone,
+            emergency_phone,
+            True,
+            datetime.now().isoformat(
+                timespec="seconds"
+            )
+        ))
+
+        con.commit()
+
+    except Exception as e:
+        con.rollback()
+        print("승선명부 저장 실패:", e)
+        flash("승선명부 저장 중 오류가 발생했습니다. 다시 시도해주세요.")
+        return redirect(
+            url_for("passenger", date=boarding_date)
+        )
+
+    finally:
+        if not con.closed:
+            con.close()
+
+    return render_template(
+        "passenger_done.html",
+        name=name
+    )
+
+
+@app.route("/admin/passengers")
+def admin_passengers():
+    if not session.get("admin"):
+        return redirect(
+            url_for("admin_login")
+        )
+
+    selected_date = request.args.get("date", "").strip()
+
+    con = db()
+
+    if selected_date:
+        passengers = con.execute("""
+            SELECT *
+            FROM passengers
+            WHERE boarding_date = %s
+            ORDER BY id ASC
+        """, (selected_date,)).fetchall()
+    else:
+        passengers = con.execute("""
+            SELECT *
+            FROM passengers
+            ORDER BY boarding_date DESC, id ASC
+        """).fetchall()
+
+    con.close()
+
+    return render_template(
+        "admin_passengers.html",
+        passengers=passengers,
+        selected_date=selected_date
+    )
+
+
+@app.route(
+    "/admin/passengers/<int:pid>/delete",
+    methods=["POST"]
+)
+def delete_passenger(pid):
+    if not session.get("admin"):
+        return redirect(
+            url_for("admin_login")
+        )
+
+    selected_date = request.form.get("date", "").strip()
+
+    con = db()
+    con.execute(
+        "DELETE FROM passengers WHERE id = %s",
+        (pid,)
+    )
+    con.commit()
+    con.close()
+
+    flash("승선명부가 삭제되었습니다.")
+
+    if selected_date:
+        return redirect(
+            url_for(
+                "admin_passengers",
+                date=selected_date
+            )
+        )
+
+    return redirect(
+        url_for("admin_passengers")
+    )
+
+
 @app.route(
     "/admin/login",
     methods=["GET", "POST"]
 )
 def admin_login():
-
     if request.method == "POST":
-
         user_id = (
             request.form.get("id")
             or request.form.get("username")
@@ -498,7 +687,6 @@ def admin_login():
 
 @app.route("/admin/logout")
 def admin_logout():
-
     session.clear()
 
     return redirect(
@@ -508,9 +696,7 @@ def admin_logout():
 
 @app.route("/admin")
 def admin():
-
     if not session.get("admin"):
-
         return redirect(
             url_for("admin_login")
         )
@@ -545,7 +731,6 @@ def admin():
     reserved_counts = {}
 
     for row in reserved_rows:
-
         key = (
             f"{row['date']}|"
             f"{row['program']}"
@@ -558,7 +743,6 @@ def admin():
     schedule_info = {}
 
     for row in schedules:
-
         key = (
             f"{row['date']}|"
             f"{row['program']}"
@@ -586,9 +770,7 @@ def admin():
     methods=["POST"]
 )
 def set_status(bid, status):
-
     if not session.get("admin"):
-
         return redirect(
             url_for("admin_login")
         )
@@ -599,7 +781,6 @@ def set_status(bid, status):
         "예약확정",
         "취소"
     ):
-
         return redirect(
             url_for("admin")
         )
@@ -612,7 +793,6 @@ def set_status(bid, status):
     ).fetchone()
 
     if not booking:
-
         con.close()
 
         return redirect(
@@ -630,13 +810,11 @@ def set_status(bid, status):
     con.close()
 
     if status != old_status:
-
         phone = booking["phone"]
         dt = booking["date"]
         program = booking["program"]
 
         if status == "입금확인":
-
             sms(
                 phone,
                 f"[헌터호 입금확인]\n"
@@ -645,7 +823,6 @@ def set_status(bid, status):
             )
 
         elif status == "예약확정":
-
             sms(
                 phone,
                 f"[헌터호 예약확정]\n"
@@ -655,7 +832,6 @@ def set_status(bid, status):
             )
 
         elif status == "취소":
-
             sms(
                 phone,
                 f"[헌터호 예약취소]\n"
@@ -673,9 +849,7 @@ def set_status(bid, status):
     methods=["POST"]
 )
 def booking_note(bid):
-
     if not session.get("admin"):
-
         return redirect(
             url_for("admin_login")
         )
@@ -706,9 +880,7 @@ def booking_note(bid):
     methods=["POST"]
 )
 def admin_schedule():
-
     if not session.get("admin"):
-
         return redirect(
             url_for("admin_login")
         )
@@ -733,7 +905,6 @@ def admin_schedule():
             "운항없음"
         )
     ):
-
         flash(
             "운항 정보를 확인해주세요."
         )
@@ -781,7 +952,6 @@ init_db()
 
 
 if __name__ == "__main__":
-
     app.run(
         host="0.0.0.0",
         port=int(

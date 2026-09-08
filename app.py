@@ -96,6 +96,7 @@ def sms(to, text):
             api_key=SOLAPI_API_KEY,
             api_secret=SOLAPI_API_SECRET
         )
+
         service.send(
             RequestMessage(
                 from_=SOLAPI_FROM,
@@ -103,23 +104,27 @@ def sms(to, text):
                 text=text
             )
         )
+
     except Exception as e:
         print("문자 발송 실패:", e)
 
 
 def get_schedule(program, dt):
     con = db()
+
     row = con.execute("""
         SELECT *
         FROM schedule
         WHERE program = %s AND date = %s
     """, (program, dt)).fetchone()
+
     con.close()
     return row
 
 
 def booked_people(program, dt):
     con = db()
+
     row = con.execute("""
         SELECT COALESCE(SUM(people), 0) AS total
         FROM bookings
@@ -127,7 +132,9 @@ def booked_people(program, dt):
           AND date = %s
           AND status != '취소'
     """, (program, dt)).fetchone()
+
     con.close()
+
     return int(row["total"] or 0)
 
 
@@ -155,7 +162,10 @@ def availability(program, dt):
     if state != "예약가능":
         return 0, state
 
-    remaining = max(0, capacity - booked_people(program, dt))
+    remaining = max(
+        0,
+        capacity - booked_people(program, dt)
+    )
 
     if remaining <= 0:
         return 0, "예약마감"
@@ -166,18 +176,33 @@ def availability(program, dt):
 def total_price(program, people):
     if program == "선셋체험":
         return 250000
+
     return PROGRAMS[program]["price"] * people
 
 
+# =========================
+# 이미지
+# =========================
+
 @app.route("/hunter-main.png")
 def hunter_main():
-    return send_from_directory(".", "hunter-main-1.png")
+    return send_from_directory(
+        app.root_path,
+        "hunter-main-1.png"
+    )
 
 
 @app.route("/parking.png")
 def parking():
-    return send_from_directory(".", "parking.png")
+    return send_from_directory(
+        app.root_path,
+        "parking.png"
+    )
 
+
+# =========================
+# 메인
+# =========================
 
 @app.route("/")
 def home():
@@ -196,7 +221,11 @@ def api_availability():
         request.args.get("program"),
         request.args.get("date")
     )
-    return jsonify({"remaining": remaining, "state": state})
+
+    return jsonify({
+        "remaining": remaining,
+        "state": state
+    })
 
 
 @app.route("/api/calendar")
@@ -214,11 +243,18 @@ def api_calendar():
         year, mon = today.year, today.month
 
     last_day = calendar.monthrange(year, mon)[1]
+
     days = []
 
     for day_num in range(1, last_day + 1):
+
         dt = f"{year:04d}-{mon:02d}-{day_num:02d}"
-        remaining, state = availability(program, dt)
+
+        remaining, state = availability(
+            program,
+            dt
+        )
+
         days.append({
             "day": day_num,
             "date": dt,
@@ -231,30 +267,57 @@ def api_calendar():
 
 @app.route("/reserve", methods=["POST"])
 def reserve():
+
     program = request.form.get("program")
     dt = request.form.get("date")
     people = request.form.get("people", type=int)
     name = request.form.get("name", "").strip()
-    phone = request.form.get("phone", "").replace("-", "").strip()
 
-    if program not in PROGRAMS or not dt or not people or not name or not phone:
+    phone = request.form.get(
+        "phone",
+        ""
+    ).replace("-", "").strip()
+
+    if (
+        program not in PROGRAMS
+        or not dt
+        or not people
+        or not name
+        or not phone
+    ):
         flash("예약정보를 모두 입력해주세요.")
         return redirect(url_for("home") + "#reserve")
 
-    remaining, state = availability(program, dt)
+    remaining, state = availability(
+        program,
+        dt
+    )
 
     if state != "예약가능" or people > remaining:
-        flash(f"현재 예약 가능한 인원은 {remaining}명입니다.")
-        return redirect(url_for("home") + "#reserve")
+        flash(
+            f"현재 예약 가능한 인원은 {remaining}명입니다."
+        )
 
-    total = total_price(program, people)
+        return redirect(
+            url_for("home") + "#reserve"
+        )
+
+    total = total_price(
+        program,
+        people
+    )
+
     payment_type = "전액 입금"
     payment_amount = total
 
     con = db()
 
     try:
-        lock_key = f"{program}|{dt}|{people}|{name}|{phone}"
+
+        lock_key = (
+            f"{program}|{dt}|{people}|{name}|{phone}"
+        )
+
         con.execute(
             "SELECT pg_advisory_xact_lock(hashtext(%s)::bigint)",
             (lock_key,)
@@ -268,30 +331,68 @@ def reserve():
               AND people = %s
               AND name = %s
               AND phone = %s
-              AND status IN ('예약접수','입금확인','예약확정')
-              AND created_at::timestamp >= NOW() - INTERVAL '30 seconds'
+              AND status IN (
+                    '예약접수',
+                    '입금확인',
+                    '예약확정'
+              )
+              AND created_at::timestamp
+                  >= NOW() - INTERVAL '30 seconds'
             ORDER BY id DESC
             LIMIT 1
-        """, (program, dt, people, name, phone)).fetchone()
+        """, (
+            program,
+            dt,
+            people,
+            name,
+            phone
+        )).fetchone()
 
         if duplicate:
             con.rollback()
-            flash("이미 예약이 접수되었습니다.")
-            return redirect(url_for("home") + "#reserve")
+
+            flash(
+                "이미 예약이 접수되었습니다."
+            )
+
+            return redirect(
+                url_for("home") + "#reserve"
+            )
 
         con.execute("""
             INSERT INTO bookings(
-                program,date,people,name,phone,status,created_at,
-                payment_type,payment_amount,total_amount
+                program,
+                date,
+                people,
+                name,
+                phone,
+                status,
+                created_at,
+                payment_type,
+                payment_amount,
+                total_amount
             )
-            VALUES(%s,%s,%s,%s,%s,'예약접수',%s,%s,%s,%s)
+            VALUES(
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                '예약접수',
+                %s,
+                %s,
+                %s,
+                %s
+            )
         """, (
             program,
             dt,
             people,
             name,
             phone,
-            datetime.now().isoformat(timespec="seconds"),
+            datetime.now().isoformat(
+                timespec="seconds"
+            ),
             payment_type,
             payment_amount,
             total
@@ -300,13 +401,25 @@ def reserve():
         con.commit()
 
     except Exception as e:
+
         con.rollback()
-        print("예약 저장 실패:", e)
-        flash("예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.")
-        return redirect(url_for("home") + "#reserve")
+
+        print(
+            "예약 저장 실패:",
+            e
+        )
+
+        flash(
+            "예약 처리 중 오류가 발생했습니다. 다시 시도해주세요."
+        )
+
+        return redirect(
+            url_for("home") + "#reserve"
+        )
 
     finally:
         con.close()
+
 
     sms(
         ADMIN_PHONE,
@@ -316,6 +429,7 @@ def reserve():
         f"{phone}\n"
         f"전액 입금 / {total:,}원"
     )
+
 
     sms(
         phone,
@@ -329,17 +443,27 @@ def reserve():
         "입금 확인 후 예약확정 안내드립니다."
     )
 
+
     flash(
-        f"예약 접수 완료! {BANK_NAME} {BANK_ACCOUNT} / "
-        f"예금주 {BANK_HOLDER} / 입금금액 {total:,}원"
+        f"예약 접수 완료! "
+        f"{BANK_NAME} {BANK_ACCOUNT} / "
+        f"예금주 {BANK_HOLDER} / "
+        f"입금금액 {total:,}원"
     )
 
-    return redirect(url_for("home") + "#reserve")
+    return redirect(
+        url_for("home") + "#reserve"
+    )
 
 
-@app.route("/admin/login", methods=["GET", "POST"])
+@app.route(
+    "/admin/login",
+    methods=["GET", "POST"]
+)
 def admin_login():
+
     if request.method == "POST":
+
         user_id = (
             request.form.get("id")
             or request.form.get("username")
@@ -353,25 +477,43 @@ def admin_login():
             or ""
         ).strip()
 
-        if user_id == ADMIN_ID and password == ADMIN_PASSWORD:
+        if (
+            user_id == ADMIN_ID
+            and password == ADMIN_PASSWORD
+        ):
             session["admin"] = True
-            return redirect(url_for("admin"))
 
-        flash("아이디 또는 비밀번호가 틀렸습니다.")
+            return redirect(
+                url_for("admin")
+            )
 
-    return render_template("login.html")
+        flash(
+            "아이디 또는 비밀번호가 틀렸습니다."
+        )
+
+    return render_template(
+        "login.html"
+    )
 
 
 @app.route("/admin/logout")
 def admin_logout():
+
     session.clear()
-    return redirect(url_for("admin_login"))
+
+    return redirect(
+        url_for("admin_login")
+    )
 
 
 @app.route("/admin")
 def admin():
+
     if not session.get("admin"):
-        return redirect(url_for("admin_login"))
+
+        return redirect(
+            url_for("admin_login")
+        )
 
     con = db()
 
@@ -389,7 +531,10 @@ def admin():
     """).fetchall()
 
     reserved_rows = con.execute("""
-        SELECT date, program, COALESCE(SUM(people), 0) AS total
+        SELECT
+            date,
+            program,
+            COALESCE(SUM(people), 0) AS total
         FROM bookings
         WHERE status != '취소'
         GROUP BY date, program
@@ -398,15 +543,31 @@ def admin():
     con.close()
 
     reserved_counts = {}
+
     for row in reserved_rows:
-        key = f"{row['date']}|{row['program']}"
-        reserved_counts[key] = int(row["total"] or 0)
+
+        key = (
+            f"{row['date']}|"
+            f"{row['program']}"
+        )
+
+        reserved_counts[key] = int(
+            row["total"] or 0
+        )
 
     schedule_info = {}
+
     for row in schedules:
-        key = f"{row['date']}|{row['program']}"
+
+        key = (
+            f"{row['date']}|"
+            f"{row['program']}"
+        )
+
         schedule_info[key] = {
-            "capacity": int(row["capacity"]),
+            "capacity": int(
+                row["capacity"]
+            ),
             "state": row["state"]
         }
 
@@ -420,23 +581,43 @@ def admin():
     )
 
 
-@app.route("/admin/booking/<int:bid>/<status>", methods=["POST"])
+@app.route(
+    "/admin/booking/<int:bid>/<status>",
+    methods=["POST"]
+)
 def set_status(bid, status):
-    if not session.get("admin"):
-        return redirect(url_for("admin_login"))
 
-    if status not in ("예약접수", "입금확인", "예약확정", "취소"):
-        return redirect(url_for("admin"))
+    if not session.get("admin"):
+
+        return redirect(
+            url_for("admin_login")
+        )
+
+    if status not in (
+        "예약접수",
+        "입금확인",
+        "예약확정",
+        "취소"
+    ):
+
+        return redirect(
+            url_for("admin")
+        )
 
     con = db()
+
     booking = con.execute(
         "SELECT * FROM bookings WHERE id = %s",
         (bid,)
     ).fetchone()
 
     if not booking:
+
         con.close()
-        return redirect(url_for("admin"))
+
+        return redirect(
+            url_for("admin")
+        )
 
     old_status = booking["status"]
 
@@ -449,11 +630,13 @@ def set_status(bid, status):
     con.close()
 
     if status != old_status:
+
         phone = booking["phone"]
         dt = booking["date"]
         program = booking["program"]
 
         if status == "입금확인":
+
             sms(
                 phone,
                 f"[헌터호 입금확인]\n"
@@ -462,6 +645,7 @@ def set_status(bid, status):
             )
 
         elif status == "예약확정":
+
             sms(
                 phone,
                 f"[헌터호 예약확정]\n"
@@ -471,6 +655,7 @@ def set_status(bid, status):
             )
 
         elif status == "취소":
+
             sms(
                 phone,
                 f"[헌터호 예약취소]\n"
@@ -478,69 +663,131 @@ def set_status(bid, status):
                 "예약이 취소되었습니다."
             )
 
-    return redirect(url_for("admin"))
+    return redirect(
+        url_for("admin")
+    )
 
 
-@app.route("/admin/booking/<int:bid>/note", methods=["POST"])
+@app.route(
+    "/admin/booking/<int:bid>/note",
+    methods=["POST"]
+)
 def booking_note(bid):
+
     if not session.get("admin"):
-        return redirect(url_for("admin_login"))
+
+        return redirect(
+            url_for("admin_login")
+        )
 
     con = db()
 
     con.execute(
         "UPDATE bookings SET admin_note = %s WHERE id = %s",
-        (request.form.get("admin_note", ""), bid)
+        (
+            request.form.get(
+                "admin_note",
+                ""
+            ),
+            bid
+        )
     )
 
     con.commit()
     con.close()
 
-    return redirect(url_for("admin"))
+    return redirect(
+        url_for("admin")
+    )
 
 
-@app.route("/admin/schedule", methods=["POST"])
+@app.route(
+    "/admin/schedule",
+    methods=["POST"]
+)
 def admin_schedule():
+
     if not session.get("admin"):
-        return redirect(url_for("admin_login"))
+
+        return redirect(
+            url_for("admin_login")
+        )
 
     program = request.form.get("program")
     dt = request.form.get("date")
-    capacity = request.form.get("capacity", type=int)
+
+    capacity = request.form.get(
+        "capacity",
+        type=int
+    )
+
     state = request.form.get("state")
 
     if (
         program not in PROGRAMS
         or not dt
         or not capacity
-        or state not in ("예약가능", "예약마감", "운항없음")
+        or state not in (
+            "예약가능",
+            "예약마감",
+            "운항없음"
+        )
     ):
-        flash("운항 정보를 확인해주세요.")
-        return redirect(url_for("admin"))
+
+        flash(
+            "운항 정보를 확인해주세요."
+        )
+
+        return redirect(
+            url_for("admin")
+        )
 
     con = db()
 
     con.execute("""
-        INSERT INTO schedule(program,date,capacity,state)
+        INSERT INTO schedule(
+            program,
+            date,
+            capacity,
+            state
+        )
         VALUES(%s,%s,%s,%s)
+
         ON CONFLICT(program,date)
+
         DO UPDATE SET
             capacity = EXCLUDED.capacity,
             state = EXCLUDED.state
-    """, (program, dt, capacity, state))
+    """, (
+        program,
+        dt,
+        capacity,
+        state
+    ))
 
     con.commit()
     con.close()
 
-    flash("운항 일정이 저장되었습니다.")
-    return redirect(url_for("admin"))
+    flash(
+        "운항 일정이 저장되었습니다."
+    )
+
+    return redirect(
+        url_for("admin")
+    )
 
 
 init_db()
 
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000))
+        port=int(
+            os.environ.get(
+                "PORT",
+                5000
+            )
+        )
     )

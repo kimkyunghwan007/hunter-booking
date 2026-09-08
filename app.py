@@ -171,12 +171,12 @@ def total_price(program, people):
 
 @app.route("/hunter-main.png")
 def hunter_main():
-    return send_from_directory("static", "hunter-main.png")
+    return send_from_directory(".", "hunter-main-1.png")
 
 
 @app.route("/parking.png")
 def parking():
-    return send_from_directory("static", "parking.png")
+    return send_from_directory(".", "parking.png")
 
 
 @app.route("/")

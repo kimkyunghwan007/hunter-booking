@@ -69,7 +69,7 @@ select,input{width:100%;padding:14px;border:1px solid #d5dde6;border-radius:12px
 </head>
 <body>
 <header class="hero">
-<img src="/hunter-main.png" alt="헌터호">
+<img src="{{ url_for('static', filename='hunter-main.png') }}" alt="헌터호">
 <div class="heroText">
 <div>거북섬 마리나 · HUNTER BOAT</div>
 <h1>⚓ 헌터호</h1>
@@ -149,7 +149,7 @@ select,input{width:100%;padding:14px;border:1px solid #d5dde6;border-radius:12px
 <div class="card" style="padding:16px;">
 <div style="font-weight:800;font-size:18px;margin-bottom:6px;">거북섬 마리나</div>
 <div style="color:#667085;line-height:1.7;margin-bottom:14px;">무료 주차장 : 거북섬로 111<br>주차 후 안내 경로를 따라 거북섬 마리나로 이동해주세요.</div>
-<img src="/parking.png" alt="거북섬 마리나 무료 주차장 안내" style="display:block;width:100%;height:auto;border-radius:14px;">
+<img src="{{ url_for('static', filename='parking.png') }}" alt="거북섬 마리나 무료 주차장 안내" style="display:block;width:100%;height:auto;border-radius:14px;">
 </div>
 </section>
 </main>

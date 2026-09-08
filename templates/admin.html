@@ -40,6 +40,11 @@ textarea{min-height:82px;resize:vertical}
 .summary{background:#0b2945;color:#fff;border-radius:14px;padding:14px;margin-top:12px}
 .summary b{font-size:17px}.summary div{margin-top:5px;font-size:13px;color:#d3dce4}
 .booking.hidden{display:none}.empty{color:#748290;text-align:center;padding:18px}
+
+.adminMenu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 18px}
+.adminMenu a{display:flex;align-items:center;justify-content:center;min-height:58px;border-radius:14px;text-decoration:none;font-weight:900;font-size:15px}
+.manifestBtn{background:#0b5f93;color:#fff}
+.passengerBtn{background:#fff;color:#0b2945;border:1px solid #ccd8e2}
 </style>
 </head>
 <body>
@@ -49,6 +54,11 @@ textarea{min-height:82px;resize:vertical}
 {% with messages = get_flashed_messages() %}
 {% if messages %}<div class="flash">{{messages[0]}}</div>{% endif %}
 {% endwith %}
+
+<div class="adminMenu">
+  <a class="manifestBtn" href="/admin/passengers">📋 승선명부 관리</a>
+  <a class="passengerBtn" href="/passenger" target="_blank">✍️ 승선명부 작성</a>
+</div>
 
 <section>
 <h2>예약 현황 달력</h2>

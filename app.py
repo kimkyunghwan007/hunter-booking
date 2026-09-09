@@ -462,28 +462,19 @@ def passenger():
     if request.method == "GET":
         return render_template(
             "passenger.html",
-            prefill_date=request.args.get("date", "")
+            prefill_date=request.args.get("date", "").strip()
         )
 
     boarding_date = request.form.get("boarding_date", "").strip()
-    name = request.form.get("name", "").strip()
-    birth_date = request.form.get("birth_date", "").replace("-", "").replace(".", "").strip()
-    phone = request.form.get("phone", "").replace("-", "").strip()
-    emergency_phone = request.form.get("emergency_phone", "").replace("-", "").strip()
+    names = request.form.getlist("name[]")
+    birth_dates = request.form.getlist("birth_date[]")
+    phones = request.form.getlist("phone[]")
+    emergency_phones = request.form.getlist("emergency_phone[]")
     agree = request.form.get("agree") == "yes"
 
-    if not all([
-        boarding_date,
-        name,
-        birth_date,
-        phone,
-        emergency_phone,
-        agree
-    ]):
-        flash("승선자 정보를 모두 입력하고 동의해주세요.")
-        return redirect(
-            url_for("passenger", date=boarding_date)
-        )
+    if not boarding_date or not agree:
+        flash("승선일을 선택하고 개인정보 수집에 동의해주세요.")
+        return redirect(url_for("passenger", date=boarding_date))
 
     try:
         datetime.strptime(boarding_date, "%Y-%m-%d")
@@ -491,72 +482,64 @@ def passenger():
         flash("승선일을 다시 확인해주세요.")
         return redirect(url_for("passenger"))
 
-    if len(birth_date) != 8 or not birth_date.isdigit():
-        flash("생년월일은 8자리 숫자로 입력해주세요. 예: 19800101")
-        return redirect(
-            url_for("passenger", date=boarding_date)
-        )
+    rows = []
+    max_len = max(len(names), len(birth_dates), len(phones), len(emergency_phones))
 
-    if not phone.isdigit() or len(phone) < 10:
-        flash("연락처를 다시 확인해주세요.")
-        return redirect(
-            url_for("passenger", date=boarding_date)
-        )
+    for i in range(max_len):
+        name = names[i].strip() if i < len(names) else ""
+        birth_date = birth_dates[i].replace("-", "").replace(".", "").strip() if i < len(birth_dates) else ""
+        phone = phones[i].replace("-", "").strip() if i < len(phones) else ""
+        emergency_phone = emergency_phones[i].replace("-", "").strip() if i < len(emergency_phones) else ""
 
-    if not emergency_phone.isdigit() or len(emergency_phone) < 10:
-        flash("비상연락처를 다시 확인해주세요.")
-        return redirect(
-            url_for("passenger", date=boarding_date)
-        )
+        if not any([name, birth_date, phone, emergency_phone]):
+            continue
+
+        if not all([name, birth_date, phone, emergency_phone]):
+            flash(f"{i + 1}번 승선자 정보를 모두 입력해주세요.")
+            return redirect(url_for("passenger", date=boarding_date))
+
+        if len(birth_date) != 8 or not birth_date.isdigit():
+            flash(f"{i + 1}번 승선자 생년월일은 8자리 숫자로 입력해주세요.")
+            return redirect(url_for("passenger", date=boarding_date))
+
+        if not phone.isdigit() or len(phone) < 10:
+            flash(f"{i + 1}번 승선자 연락처를 다시 확인해주세요.")
+            return redirect(url_for("passenger", date=boarding_date))
+
+        if not emergency_phone.isdigit() or len(emergency_phone) < 10:
+            flash(f"{i + 1}번 승선자 비상연락처를 다시 확인해주세요.")
+            return redirect(url_for("passenger", date=boarding_date))
+
+        rows.append((name, birth_date, phone, emergency_phone))
+
+    if not rows:
+        flash("승선자를 1명 이상 입력해주세요.")
+        return redirect(url_for("passenger", date=boarding_date))
 
     con = db()
 
     try:
-        duplicate = con.execute("""
-            SELECT id
-            FROM passengers
-            WHERE boarding_date = %s
-              AND name = %s
-              AND birth_date = %s
-              AND phone = %s
-            ORDER BY id DESC
-            LIMIT 1
-        """, (
-            boarding_date,
-            name,
-            birth_date,
-            phone
-        )).fetchone()
+        for name, birth_date, phone, emergency_phone in rows:
+            duplicate = con.execute("""
+                SELECT id FROM passengers
+                WHERE boarding_date=%s AND name=%s AND birth_date=%s AND phone=%s
+                LIMIT 1
+            """, (boarding_date, name, birth_date, phone)).fetchone()
 
-        if duplicate:
-            con.close()
-            return render_template(
-                "passenger_done.html",
-                name=name
-            )
+            if duplicate:
+                continue
 
-        con.execute("""
-            INSERT INTO passengers(
-                boarding_date,
-                name,
-                birth_date,
-                phone,
-                emergency_phone,
-                agreed,
-                created_at
-            )
-            VALUES(%s,%s,%s,%s,%s,%s,%s)
-        """, (
-            boarding_date,
-            name,
-            birth_date,
-            phone,
-            emergency_phone,
-            True,
-            datetime.now().isoformat(
-                timespec="seconds"
-            )
-        ))
+            con.execute("""
+                INSERT INTO passengers(
+                    boarding_date, name, birth_date, phone,
+                    emergency_phone, agreed, created_at
+                )
+                VALUES(%s,%s,%s,%s,%s,%s,%s)
+            """, (
+                boarding_date, name, birth_date, phone,
+                emergency_phone, True,
+                datetime.now().isoformat(timespec="seconds")
+            ))
 
         con.commit()
 
@@ -564,17 +547,15 @@ def passenger():
         con.rollback()
         print("승선명부 저장 실패:", e)
         flash("승선명부 저장 중 오류가 발생했습니다. 다시 시도해주세요.")
-        return redirect(
-            url_for("passenger", date=boarding_date)
-        )
+        return redirect(url_for("passenger", date=boarding_date))
 
     finally:
-        if not con.closed:
-            con.close()
+        con.close()
 
     return render_template(
         "passenger_done.html",
-        name=name
+        name=rows[0][0],
+        count=len(rows)
     )
 
 
@@ -823,11 +804,15 @@ def set_status(bid, status):
             )
 
         elif status == "예약확정":
+            manifest_url = f"https://hunter-booking.onrender.com/passenger?date={dt}"
+
             sms(
                 phone,
                 f"[헌터호 예약확정]\n"
                 f"{dt} {program}\n"
                 "예약이 확정되었습니다.\n"
+                "아래 링크에서 승선자 전원의 승선명부를 작성해주세요.\n"
+                f"{manifest_url}\n"
                 "감사합니다."
             )
 

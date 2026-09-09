@@ -40,17 +40,25 @@ textarea{min-height:82px;resize:vertical}
 .summary{background:#0b2945;color:#fff;border-radius:14px;padding:14px;margin-top:12px}
 .summary b{font-size:17px}.summary div{margin-top:5px;font-size:13px;color:#d3dce4}
 .booking.hidden{display:none}.empty{color:#748290;text-align:center;padding:18px}
-
 .adminMenu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 18px}
-.adminMenu a{display:flex;align-items:center;justify-content:center;min-height:58px;border-radius:14px;text-decoration:none;font-weight:900;font-size:15px}
+.adminMenu a,.adminMenu button{display:flex;align-items:center;justify-content:center;min-height:58px;border-radius:14px;text-decoration:none;font-weight:900;font-size:15px;font-family:inherit}
 .manifestBtn{background:#0b5f93;color:#fff}
 .passengerBtn{background:#fff;color:#0b2945;border:1px solid #ccd8e2}
+.manualBtn{grid-column:1/-1;border:0;background:#d9a936;color:#142334;cursor:pointer}
+.manualWrap{display:none}
+.manualWrap.open{display:block}
+.manualTitle{display:flex;justify-content:space-between;align-items:center}
+.manualTitle h2{margin-bottom:4px}
+.closeBtn{border:0;background:#e9eef3;border-radius:9px;padding:8px 11px;font-weight:900}
+.hint{font-size:13px;color:#657482;line-height:1.5;margin-top:4px}
+.checkrow{display:flex;align-items:flex-start;gap:9px;margin-top:13px;padding:12px;background:#f5f8fb;border-radius:10px}
+.checkrow input{width:20px;height:20px;margin:1px 0 0;flex:0 0 auto}
+.checkrow label{margin:0;font-size:13px;line-height:1.45}
 </style>
 </head>
 <body>
 <header><b>⚓ 헌터호 관리자</b><a href="/admin/logout">로그아웃</a></header>
 <main>
-
 {% with messages = get_flashed_messages() %}
 {% if messages %}<div class="flash">{{messages[0]}}</div>{% endif %}
 {% endwith %}
@@ -58,16 +66,37 @@ textarea{min-height:82px;resize:vertical}
 <div class="adminMenu">
   <a class="manifestBtn" href="/admin/passengers">📋 승선명부 관리</a>
   <a class="passengerBtn" href="/passenger" target="_blank">✍️ 승선명부 작성</a>
+  <button type="button" class="manualBtn" onclick="toggleManual(true)">➕ 전화·카톡 수동 예약 등록</button>
 </div>
+
+<section id="manualBooking" class="manualWrap">
+  <div class="manualTitle">
+    <h2>수동 예약 등록</h2>
+    <button type="button" class="closeBtn" onclick="toggleManual(false)">닫기</button>
+  </div>
+  <div class="hint">전화·카톡·지인 예약을 홈페이지 예약과 똑같이 등록합니다.</div>
+  <form method="post" action="/admin/manual-booking" class="card">
+    <label>체험</label>
+    <select name="program" required><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
+    <label>날짜</label><input type="date" name="date" id="manualDate" required>
+    <label>예약 인원</label><input type="number" name="people" min="1" max="9" value="1" required>
+    <label>예약자명</label><input type="text" name="name" maxlength="50" placeholder="예: 홍길동" required>
+    <label>전화번호</label><input type="tel" name="phone" inputmode="numeric" placeholder="01012345678" required>
+    <label>결제방법</label>
+    <select name="payment_type"><option value="전액 입금">전액 입금</option><option value="현장결제">현장결제</option></select>
+    <label>관리자 메모</label><textarea name="admin_note" maxlength="500" placeholder="예: 전화예약, 낚싯대 2대 대여"></textarea>
+    <div class="checkrow">
+      <input type="checkbox" id="sendMessage" name="send_message" value="yes">
+      <label for="sendMessage">등록하면서 손님에게 <b>예약접수 문자도 바로 보내기</b><br>체크하지 않으면 예약만 등록되고 문자는 가지 않습니다.</label>
+    </div>
+    <button class="gold" type="submit">수동 예약 등록</button>
+  </form>
+</section>
 
 <section>
 <h2>예약 현황 달력</h2>
 <div class="card">
-  <div class="calhead">
-    <button type="button" id="prevMonth">‹</button>
-    <div class="calmonth" id="calMonth"></div>
-    <button type="button" id="nextMonth">›</button>
-  </div>
+  <div class="calhead"><button type="button" id="prevMonth">‹</button><div class="calmonth" id="calMonth"></div><button type="button" id="nextMonth">›</button></div>
   <div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
   <div id="calendar" class="calendar"></div>
   <div id="daySummary" class="summary"><b>날짜를 선택해주세요.</b><div>날짜별 예약 인원을 확인할 수 있습니다.</div></div>
@@ -77,8 +106,7 @@ textarea{min-height:82px;resize:vertical}
 <section>
 <h2>날짜별 운항 설정</h2>
 <form method="post" action="/admin/schedule" class="card">
-<label>체험</label>
-<select name="program" id="scheduleProgram"><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
+<label>체험</label><select name="program" id="scheduleProgram"><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
 <label>날짜</label><input id="scheduleDate" type="date" name="date" required>
 <label>정원</label><input id="scheduleCapacity" type="number" name="capacity" value="8" min="1" max="9">
 <label>상태</label><select name="state"><option>예약가능</option><option>예약마감</option><option>운항없음</option></select>
@@ -95,13 +123,11 @@ textarea{min-height:82px;resize:vertical}
 <b>{{b.date}} · {{b.program}}</b><br>
 {{b.name}} · {{b.people}}명 · {{b.phone}}<br>
 <span class="status">{{b.status}}</span>
-
 <div class="pay">
-<b>입금:</b> {{b.payment_type or '기존 예약'}}
+<b>결제:</b> {{b.payment_type or '기존 예약'}}
 {% if b.payment_amount %} · {{'{:,}'.format(b.payment_amount)}}원{% endif %}
 {% if b.total_amount %}<br><b>총 이용금액:</b> {{'{:,}'.format(b.total_amount)}}원{% endif %}
 </div>
-
 <div class="noteBox">
 <form method="post" action="/admin/booking/{{b.id}}/note">
 <label>📝 관리자 메모</label>
@@ -109,7 +135,6 @@ textarea{min-height:82px;resize:vertical}
 <button class="noteBtn" type="submit">메모 저장</button>
 </form>
 </div>
-
 <div class="actions">
 <form method="post" action="/admin/booking/{{b.id}}/입금확인"><button class="paid">입금확인</button></form>
 <form method="post" action="/admin/booking/{{b.id}}/예약확정"><button>예약확정</button></form>
@@ -117,23 +142,15 @@ textarea{min-height:82px;resize:vertical}
 </div>
 </div>
 {% endfor %}
-{% else %}
-<div class="card empty">아직 접수된 예약이 없습니다.</div>
-{% endif %}
+{% else %}<div class="card empty">아직 접수된 예약이 없습니다.</div>{% endif %}
 </div>
 </section>
 
 <section>
 <h2>설정된 운항일</h2>
-{% if schedules %}
-{% for s in schedules %}
-<div class="card"><b>{{s.date}} · {{s.program}}</b><br>정원 {{s.capacity}}명 · {{s.state}}</div>
-{% endfor %}
-{% else %}
-<div class="card">별도 설정된 운항일이 없습니다.</div>
-{% endif %}
+{% if schedules %}{% for s in schedules %}<div class="card"><b>{{s.date}} · {{s.program}}</b><br>정원 {{s.capacity}}명 · {{s.state}}</div>{% endfor %}
+{% else %}<div class="card">별도 설정된 운항일이 없습니다.</div>{% endif %}
 </section>
-
 </main>
 
 <script>
@@ -145,102 +162,38 @@ const cal=document.getElementById('calendar');
 const calMonth=document.getElementById('calMonth');
 const summary=document.getElementById('daySummary');
 const scheduleDate=document.getElementById('scheduleDate');
-
 const now=new Date();
 let view=new Date(now.getFullYear(),now.getMonth(),1);
 let selectedDate='';
-
 function ymd(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
-
+function toggleManual(open){const box=document.getElementById('manualBooking');box.classList.toggle('open',open);if(open)box.scrollIntoView({behavior:'smooth',block:'start'});}
 function programLine(dt,program,cssClass){
-  const key=dt+'|'+program;
-  const reserved=Number(reservedCounts[key]||0);
-  const custom=scheduleInfo[key]||null;
-  const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);
-  const state=custom?custom.state:'예약가능';
-  const label=program.replace('체험','');
-  const remaining=Math.max(0,capacity-reserved);
-
-  if(state==='운항없음'){
-    return `<div class="mini offmini">${label} 운항없음</div>`;
-  }
-  if(state==='예약마감' || remaining===0){
-    return `<div class="mini ${cssClass} fullmini">${label} 마감</div>`;
-  }
+  const key=dt+'|'+program;const reserved=Number(reservedCounts[key]||0);const custom=scheduleInfo[key]||null;
+  const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);const state=custom?custom.state:'예약가능';
+  const label=program.replace('체험','');const remaining=Math.max(0,capacity-reserved);
+  if(state==='운항없음')return `<div class="mini offmini">${label} 운항없음</div>`;
+  if(state==='예약마감'||remaining===0)return `<div class="mini ${cssClass} fullmini">${label} 마감</div>`;
   return `<div class="mini ${cssClass}">${label} 잔여 ${remaining}명</div>`;
 }
-
 function drawCalendar(){
-  const y=view.getFullYear(),m=view.getMonth();
-  calMonth.textContent=y+'년 '+(m+1)+'월';
-  const first=new Date(y,m,1).getDay();
-  const last=new Date(y,m+1,0).getDate();
-  let html='';
-
-  for(let i=0;i<first;i++) html+='<div class="day blank"></div>';
-
-  for(let d=1;d<=last;d++){
-    const dt=ymd(y,m,d);
-    const rows=
-      programLine(dt,'주간체험','daymini')+
-      programLine(dt,'야간체험','nightmini')+
-      programLine(dt,'선셋체험','sunmini');
-
-    html+=`<div class="day${selectedDate===dt?' selected':''}" onclick="selectDay('${dt}')">
-      <div class="dnum">${d}</div>${rows}
-    </div>`;
-  }
+  const y=view.getFullYear(),m=view.getMonth();calMonth.textContent=y+'년 '+(m+1)+'월';const first=new Date(y,m,1).getDay();const last=new Date(y,m+1,0).getDate();let html='';
+  for(let i=0;i<first;i++)html+='<div class="day blank"></div>';
+  for(let d=1;d<=last;d++){const dt=ymd(y,m,d);const rows=programLine(dt,'주간체험','daymini')+programLine(dt,'야간체험','nightmini')+programLine(dt,'선셋체험','sunmini');html+=`<div class="day${selectedDate===dt?' selected':''}" onclick="selectDay('${dt}')"><div class="dnum">${d}</div>${rows}</div>`;}
   cal.innerHTML=html;
 }
-
 function selectDay(dt){
-  selectedDate=dt;
-  scheduleDate.value=dt;
-
-  let count=0;
-  bookingEls.forEach(el=>{
-    const match=el.dataset.date===dt;
-    el.classList.toggle('hidden',!match);
-    if(match) count++;
-  });
-
-  const lines=[];
-  for(const program of ['주간체험','야간체험','선셋체험']){
-    const key=dt+'|'+program;
-    const reserved=Number(reservedCounts[key]||0);
-    const custom=scheduleInfo[key]||null;
-    const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);
-    const state=custom?custom.state:'예약가능';
-    const remaining=Math.max(0,capacity-reserved);
-
-    if(state==='운항없음'){
-      lines.push(`${program}: 운항없음`);
-    }else if(state==='예약마감' || remaining===0){
-      lines.push(`${program}: 마감`);
-    }else{
-      lines.push(`${program}: 예약 ${reserved}명 · 잔여 ${remaining}명`);
-    }
-  }
-
-  summary.innerHTML=`<b>${dt} 예약 현황</b><div>${lines.join('<br>')}</div><div>예약자 ${count}건</div>`;
-  drawCalendar();
-  document.getElementById('bookingList').scrollIntoView({behavior:'smooth',block:'start'});
+  selectedDate=dt;scheduleDate.value=dt;const manualDate=document.getElementById('manualDate');if(manualDate)manualDate.value=dt;
+  let count=0;bookingEls.forEach(el=>{const match=el.dataset.date===dt;el.classList.toggle('hidden',!match);if(match)count++;});
+  const lines=[];for(const program of ['주간체험','야간체험','선셋체험']){const key=dt+'|'+program;const reserved=Number(reservedCounts[key]||0);const custom=scheduleInfo[key]||null;const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);const state=custom?custom.state:'예약가능';const remaining=Math.max(0,capacity-reserved);if(state==='운항없음')lines.push(`${program}: 운항없음`);else if(state==='예약마감'||remaining===0)lines.push(`${program}: 마감`);else lines.push(`${program}: 예약 ${reserved}명 · 잔여 ${remaining}명`);}
+  summary.innerHTML=`<b>${dt} 예약 현황</b><div>${lines.join('<br>')}</div><div>예약자 ${count}건</div>`;drawCalendar();document.getElementById('bookingList').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
 document.getElementById('prevMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);drawCalendar()};
 document.getElementById('nextMonth').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);drawCalendar()};
-
-const scheduleProgram=document.getElementById('scheduleProgram');
-const scheduleCapacity=document.getElementById('scheduleCapacity');
-
-function setDefaultCapacity(){
-  if(scheduleProgram.value==='주간체험') scheduleCapacity.value=8;
-  else if(scheduleProgram.value==='야간체험') scheduleCapacity.value=6;
-  else if(scheduleProgram.value==='선셋체험') scheduleCapacity.value=4;
-}
-scheduleProgram.addEventListener('change',setDefaultCapacity);
-setDefaultCapacity();
-
+const scheduleProgram=document.getElementById('scheduleProgram');const scheduleCapacity=document.getElementById('scheduleCapacity');
+function setDefaultCapacity(){if(scheduleProgram.value==='주간체험')scheduleCapacity.value=8;else if(scheduleProgram.value==='야간체험')scheduleCapacity.value=6;else if(scheduleProgram.value==='선셋체험')scheduleCapacity.value=4;}
+scheduleProgram.addEventListener('change',setDefaultCapacity);setDefaultCapacity();
+const todayString=ymd(now.getFullYear(),now.getMonth(),now.getDate());const manualDate=document.getElementById('manualDate');if(manualDate&&!manualDate.value)manualDate.value=todayString;
+if(location.hash==='#manualBooking')toggleManual(true);
 drawCalendar();
 </script>
 </body>

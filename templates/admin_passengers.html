@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>헌터호 승선명부 관리</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",sans-serif;background:#eef3f7;color:#162437}a{text-decoration:none;color:inherit}header{position:sticky;top:0;background:#0b2945;color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;z-index:10}header .links{display:flex;gap:8px}header a{font-size:12px;background:#ffffff1a;padding:8px 10px;border-radius:8px}main{max-width:900px;margin:auto;padding:16px}h1{font-size:22px}.filter{background:#fff;padding:14px;border-radius:14px;margin-bottom:14px;box-shadow:0 4px 14px #0001}.filter form{display:flex;gap:8px;flex-wrap:wrap}.filter input{flex:1;min-width:180px;padding:12px;border:1px solid #d5dde6;border-radius:9px;font-size:15px}.filter button,.print{border:0;background:#0b2945;color:#fff;padding:11px 14px;border-radius:9px;font-weight:800}.summary{font-weight:900;margin:12px 0}.card{background:#fff;border-radius:14px;padding:14px;margin:9px 0;border:1px solid #e5ebf0;box-shadow:0 4px 14px #0001}.row{display:grid;grid-template-columns:55px 1.2fr 1fr 1.3fr 1.3fr;gap:8px;align-items:center}.head{font-size:12px;color:#71808e;font-weight:900}.small{font-size:12px;color:#71808e;margin-top:6px}.danger{display:inline-block;margin-top:8px;background:#f5e8e8;color:#a23131;padding:5px 8px;border-radius:8px;font-size:12px}.empty{padding:28px;text-align:center;color:#7b8995;background:#fff;border-radius:14px}@media(max-width:700px){.head{display:none}.row{display:block}.row>div{margin:3px 0}.row>div:first-child{font-weight:900;color:#0b2945}.row>div:nth-child(2){font-size:18px;font-weight:900}}
+@media print{header,.filter,.print,.danger{display:none!important}body{background:white}main{max-width:none;padding:0}.card{box-shadow:none;break-inside:avoid}.row{grid-template-columns:55px 1.2fr 1fr 1.3fr 1.3fr}.head{display:grid}}
+</style></head><body>
+<header><b>⚓ 헌터호 승선명부</b><div class="links"><a href="/admin">예약관리</a><a href="/admin/logout">로그아웃</a></div></header>
+<main>
+<h1>온라인 승선자 명부</h1>
+<div class="filter"><form method="get" action="/admin/passengers"><input type="date" name="date" value="{{selected_date or ''}}"><button type="submit">날짜 조회</button><a href="/admin/passengers" style="padding:11px 14px;background:#e7ecf1;border-radius:9px;font-weight:800">전체</a><button class="print" type="button" onclick="window.print()">인쇄</button></form></div>
+<div class="summary">{% if selected_date %}{{selected_date}} · {% endif %}총 {{passengers|length}}명</div>
+<div class="card head"><div class="row"><div>No.</div><div>성명</div><div>생년월일</div><div>연락처</div><div>비상연락처</div></div></div>
+{% if passengers %}
+{% for p in passengers %}
+<div class="card"><div class="row"><div>{{loop.index}}</div><div>{{p.name}}</div><div>{{p.birth_date}}</div><div>{{p.phone}}</div><div>{{p.emergency_phone}}</div></div><div class="small">승선일 {{p.boarding_date}} · 작성 {{p.created_at}} · 안전수칙/개인정보 동의</div></div>
+{% endfor %}
+{% else %}<div class="empty">등록된 승선자가 없습니다.</div>{% endif %}
+</main></body></html>

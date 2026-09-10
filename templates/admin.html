@@ -22,6 +22,8 @@ textarea{min-height:82px;resize:vertical}
 .actions .paid{background:#16734a}.actions .muted{background:#e7ecf1;color:#172332}
 .status{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#eaf5ef;color:#147044;font-size:12px;font-weight:800}
 .pay{margin-top:9px;padding:10px;background:#fff8e8;border-radius:9px;font-size:13px;line-height:1.55}
+.manifestState{margin-top:9px;padding:10px;background:#eef7fb;border-radius:9px;font-size:13px;font-weight:900;line-height:1.5}
+.manifestState a{display:inline-block;margin-top:6px;color:#0b5f93;text-decoration:none}
 .noteBox{margin-top:10px;padding:11px;background:#f6f8fb;border:1px solid #e1e7ee;border-radius:11px}
 .noteBox label{margin-top:0}
 .noteBtn{width:100%;margin-top:8px;border:0;border-radius:9px;padding:10px;background:#5b6470;color:#fff;font-weight:900}
@@ -127,6 +129,12 @@ textarea{min-height:82px;resize:vertical}
 <b>결제:</b> {{b.payment_type or '기존 예약'}}
 {% if b.payment_amount %} · {{'{:,}'.format(b.payment_amount)}}원{% endif %}
 {% if b.total_amount %}<br><b>총 이용금액:</b> {{'{:,}'.format(b.total_amount)}}원{% endif %}
+</div>
+
+<div class="manifestState">
+📋 승선명부 {{passenger_counts.get(b.id, 0)}} / {{b.people}}명
+{% if passenger_counts.get(b.id, 0) == b.people %} · ✅ 작성완료{% endif %}
+<br><a href="/passenger?booking_id={{b.id}}" target="_blank">이 예약 승선명부 작성/수정</a>
 </div>
 <div class="noteBox">
 <form method="post" action="/admin/booking/{{b.id}}/note">

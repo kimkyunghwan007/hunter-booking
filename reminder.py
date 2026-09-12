@@ -1,4 +1,3 @@
-# rebuild trigger
 import os
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -15,9 +14,32 @@ SOLAPI_API_SECRET = os.environ.get("SOLAPI_API_SECRET")
 SOLAPI_FROM = os.environ.get("SOLAPI_FROM")
 
 PROGRAM_GUIDE = {
-    "주간체험": "출항시간 06:00\n장소 거북섬 마리나\n무료주차 거북섬로 111",
-    "야간체험": "출항시간 17:00\n장소 거북섬 마리나\n무료주차 거북섬로 111",
-    "선셋체험": "출항시간은 일몰시간에 맞춰 안내드립니다.\n장소 거북섬 마리나\n무료주차 거북섬로 111",
+    "주간체험": (
+        "출항 06:00\n"
+        "05:30까지 도착 부탁드립니다.\n"
+        "네비: 거북섬 마리나 / 정왕동 2730\n"
+        "무료주차장: 거북섬로 111\n"
+        "주차 후 브릿지 다리를 따라 들어오시면 철문이 있습니다.\n"
+        "철문 도착 후 전화주세요.\n"
+        "안쪽 주차장이 만차일 경우 반대편 무료주차장을 이용해주세요."
+    ),
+    "야간체험": (
+        "출항 17:00\n"
+        "16:30까지 도착 부탁드립니다.\n"
+        "네비: 거북섬 마리나 / 정왕동 2730\n"
+        "무료주차장: 거북섬로 111\n"
+        "주차 후 브릿지 다리를 따라 들어오시면 철문이 있습니다.\n"
+        "철문 도착 후 전화주세요.\n"
+        "안쪽 주차장이 만차일 경우 반대편 무료주차장을 이용해주세요."
+    ),
+    "선셋체험": (
+        "출항시간은 일몰시간에 맞춰 안내드립니다.\n"
+        "네비: 거북섬 마리나 / 정왕동 2730\n"
+        "무료주차장: 거북섬로 111\n"
+        "주차 후 브릿지 다리를 따라 들어오시면 철문이 있습니다.\n"
+        "철문 도착 후 전화주세요.\n"
+        "안쪽 주차장이 만차일 경우 반대편 무료주차장을 이용해주세요."
+    ),
 }
 
 def db():
@@ -29,7 +51,6 @@ def db():
 def send_sms(phone, text):
     if not all([SOLAPI_API_KEY, SOLAPI_API_SECRET, SOLAPI_FROM, phone]):
         raise RuntimeError("SOLAPI 환경변수 설정이 누락되었습니다.")
-
     service = SolapiMessageService(
         api_key=SOLAPI_API_KEY,
         api_secret=SOLAPI_API_SECRET,
@@ -44,10 +65,8 @@ def send_sms(phone, text):
 
 def main():
     tomorrow = (datetime.now(KST).date() + timedelta(days=1)).isoformat()
-
     con = db()
 
-    # 중복 발송 방지용 컬럼. 처음 실행할 때 자동 생성됩니다.
     con.execute(
         "ALTER TABLE bookings ADD COLUMN IF NOT EXISTS reminder_sent_at TEXT"
     )
@@ -67,13 +86,13 @@ def main():
     for b in bookings:
         guide = PROGRAM_GUIDE.get(
             b["program"],
-            "장소 거북섬 마리나\n무료주차 거북섬로 111"
+            "네비: 거북섬 마리나 / 정왕동 2730\n무료주차장: 거북섬로 111\n주차 후 브릿지 다리를 따라 들어오시면 철문이 있습니다.\n철문 도착 후 전화주세요."
         )
 
         text = (
             "[헌터호 출항 안내]\n"
-            f"{b['name']}님, 내일 {b['date']} {b['program']} 예약입니다.\n"
-            f"{guide}\n"
+            f"{b['name']}님, 내일 {b['program']} 예약입니다.\n\n"
+            f"{guide}\n\n"
             f"예약인원 {b['people']}명\n"
             "기상 및 현장 상황에 따라 운항시간이 변동될 수 있습니다.\n"
             "안전하게 오세요."
@@ -81,14 +100,12 @@ def main():
 
         try:
             send_sms(b["phone"], text)
-
             con.execute(
                 "UPDATE bookings SET reminder_sent_at=%s WHERE id=%s AND reminder_sent_at IS NULL",
                 (datetime.now(KST).isoformat(timespec="seconds"), b["id"]),
             )
             con.commit()
             print(f"발송 성공: 예약 #{b['id']} / {b['name']}")
-
         except Exception as e:
             con.rollback()
             print(f"발송 실패: 예약 #{b['id']} / {b['name']} / {e}")

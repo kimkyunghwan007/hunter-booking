@@ -277,6 +277,7 @@ background:white
 .closed .dstate{color:#c53b3b}
 .past{opacity:.35}
 .selected{border:2px solid #0a578c;background:#edf6fd}
+.clickableClosed{cursor:pointer}
 
 .infoBox{
 margin-top:12px;
@@ -754,6 +755,7 @@ const monthTitle=document.getElementById('monthTitle');
 const programInfo=document.getElementById('programInfo');
 const payAmount=document.getElementById('payAmount');
 const publicBookings=document.getElementById('publicBookings');
+const submitBtn=document.getElementById('submitBtn');
 
 
 const programGuide={
@@ -930,6 +932,9 @@ remaining.textContent=
 publicBookings.style.display='none';
 publicBookings.innerHTML='';
 
+submitBtn.disabled=false;
+submitBtn.textContent='예약 신청하기';
+
 return;
 
 }
@@ -938,7 +943,7 @@ const r=await fetch(
 '/api/availability?program='
 +encodeURIComponent(program.value)
 +'&date='
-+dateInput.value
++encodeURIComponent(dateInput.value)
 );
 
 const d=await r.json();
@@ -949,12 +954,26 @@ remaining.textContent=
 '✅ 예약 가능 · 잔여 '+d.remaining+'명';
 
 people.max=Math.max(1,d.remaining);
+people.disabled=false;
+
+submitBtn.disabled=false;
+submitBtn.textContent='예약 신청하기';
 
 }else{
 
 remaining.textContent='⛔ '+d.state;
 
 people.max=1;
+
+if(d.state==='예약마감'){
+people.disabled=true;
+submitBtn.disabled=true;
+submitBtn.textContent='예약 마감';
+}else{
+people.disabled=false;
+submitBtn.disabled=true;
+submitBtn.textContent=d.state;
+}
 
 }
 
@@ -1012,6 +1031,16 @@ else if(x.state==='예약가능'){
 cls+=' '+(x.remaining<=2?'low':'available');
 
 txt='잔여 '+x.remaining+'명';
+
+click=`onclick="pick('${x.date}')"`;
+
+}
+
+else if(x.state==='예약마감'){
+
+cls+=' closed clickableClosed';
+
+txt='예약마감';
 
 click=`onclick="pick('${x.date}')"`;
 
@@ -1098,6 +1127,10 @@ remaining.textContent=
 publicBookings.style.display='none';
 publicBookings.innerHTML='';
 
+people.disabled=false;
+submitBtn.disabled=false;
+submitBtn.textContent='예약 신청하기';
+
 updateProgramInfo();
 
 load();
@@ -1165,15 +1198,17 @@ load();
 const reserveForm=
 document.getElementById('reserveForm');
 
-const submitBtn=
-document.getElementById('submitBtn');
-
 let submitting=false;
 
 
 reserveForm.addEventListener(
 'submit',
 function(e){
+
+if(submitBtn.disabled){
+e.preventDefault();
+return false;
+}
 
 if(submitting){
 

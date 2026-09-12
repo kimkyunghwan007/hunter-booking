@@ -145,6 +145,15 @@ def total_price(program, people):
     return PROGRAMS[program]["price"] * people
 
 
+def mask_public_name(name):
+    name = (name or "").strip()
+    if not name:
+        return "*"
+    if len(name) == 1:
+        return "*"
+    return name[:-1] + "*"
+
+
 @app.route("/hunter-main.png")
 def hunter_main():
     return send_from_directory(app.root_path, "hunter-main-1.png")
@@ -157,7 +166,13 @@ def parking():
 
 @app.route("/")
 def home():
-    return render_template("index.html", programs=PROGRAMS, bank_name=BANK_NAME, bank_account=BANK_ACCOUNT, bank_holder=BANK_HOLDER)
+    return render_template(
+        "index.html",
+        programs=PROGRAMS,
+        bank_name=BANK_NAME,
+        bank_account=BANK_ACCOUNT,
+        bank_holder=BANK_HOLDER
+    )
 
 
 @app.route("/api/availability")
@@ -184,6 +199,43 @@ def api_calendar():
         remaining, state = availability(program, dt)
         days.append({"day": day_num, "date": dt, "remaining": remaining, "state": state})
     return jsonify({"days": days})
+
+
+@app.route("/api/public-bookings")
+def api_public_bookings():
+    program = request.args.get("program", "").strip()
+    dt = request.args.get("date", "").strip()
+
+    if program not in PROGRAMS or not dt:
+        return jsonify({"bookings": []})
+
+    con = db()
+    rows = con.execute("""
+        SELECT name, people, status
+        FROM bookings
+        WHERE program = %s
+          AND date = %s
+          AND status != '취소'
+        ORDER BY id ASC
+    """, (program, dt)).fetchall()
+    con.close()
+
+    result = []
+    for row in rows:
+        if row["status"] == "예약접수":
+            public_status = "입금 전"
+        elif row["status"] in ("입금확인", "예약확정"):
+            public_status = "예약 완료"
+        else:
+            continue
+
+        result.append({
+            "name": mask_public_name(row["name"]),
+            "people": int(row["people"]),
+            "status": public_status
+        })
+
+    return jsonify({"bookings": result})
 
 
 @app.route("/reserve", methods=["POST"])

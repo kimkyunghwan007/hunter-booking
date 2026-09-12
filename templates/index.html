@@ -126,6 +126,41 @@ color:#0a578c;
 font-weight:800
 }
 
+.publicBookings{
+margin:10px 0 15px;
+padding:14px;
+background:#f7f9fb;
+border:1px solid #e1e7ed;
+border-radius:12px
+}
+
+.publicBookingsTitle{
+font-weight:900;
+font-size:14px;
+margin-bottom:9px;
+color:#374151
+}
+
+.publicBookingRow{
+padding:8px 0;
+border-bottom:1px solid #e8edf2;
+font-size:14px
+}
+
+.publicBookingRow:last-child{
+border-bottom:0
+}
+
+.publicBookingDone{
+font-weight:900;
+color:#13854b
+}
+
+.publicBookingWait{
+font-weight:900;
+color:#c07800
+}
+
 .submit{
 width:100%;
 border:0;
@@ -441,6 +476,8 @@ color:#76664b
 달력에서 날짜를 선택해주세요.
 </div>
 
+<div id="publicBookings" class="publicBookings" style="display:none;"></div>
+
 <label>예약 인원</label>
 <input id="people" name="people" type="number" min="1" value="1" required>
 
@@ -501,8 +538,6 @@ required
 
 </label>
 
-
-<!-- 취소 환불 규정 -->
 
 <div class="refundBox">
 
@@ -718,6 +753,7 @@ const cal=document.getElementById('calendar');
 const monthTitle=document.getElementById('monthTitle');
 const programInfo=document.getElementById('programInfo');
 const payAmount=document.getElementById('payAmount');
+const publicBookings=document.getElementById('publicBookings');
 
 
 const programGuide={
@@ -816,6 +852,72 @@ return d.getFullYear()
 }
 
 
+async function loadPublicBookings(){
+
+if(!dateInput.value){
+
+publicBookings.style.display='none';
+publicBookings.innerHTML='';
+
+return;
+
+}
+
+try{
+
+const r=await fetch(
+'/api/public-bookings?program='
++encodeURIComponent(program.value)
++'&date='
++encodeURIComponent(dateInput.value)
+);
+
+const d=await r.json();
+
+if(!d.bookings || d.bookings.length===0){
+
+publicBookings.style.display='none';
+publicBookings.innerHTML='';
+
+return;
+
+}
+
+let html=`
+<div class="publicBookingsTitle">
+📋 현재 예약 현황
+</div>
+`;
+
+for(const b of d.bookings){
+
+const cls=
+b.status==='예약 완료'
+?'publicBookingDone'
+:'publicBookingWait';
+
+html+=`
+<div class="publicBookingRow">
+${b.name} · ${b.people}명 ·
+<span class="${cls}">${b.status}</span>
+</div>
+`;
+
+}
+
+publicBookings.innerHTML=html;
+publicBookings.style.display='block';
+
+}catch(e){
+
+publicBookings.style.display='none';
+publicBookings.innerHTML='';
+
+}
+
+}
+
+
 async function availability(){
 
 hidden.value=program.value;
@@ -824,6 +926,9 @@ if(!dateInput.value){
 
 remaining.textContent=
 '달력에서 날짜를 선택해주세요.';
+
+publicBookings.style.display='none';
+publicBookings.innerHTML='';
 
 return;
 
@@ -852,6 +957,8 @@ remaining.textContent='⛔ '+d.state;
 people.max=1;
 
 }
+
+loadPublicBookings();
 
 }
 
@@ -987,6 +1094,9 @@ dateInput.value='';
 
 remaining.textContent=
 '달력에서 날짜를 선택해주세요.';
+
+publicBookings.style.display='none';
+publicBookings.innerHTML='';
 
 updateProgramInfo();
 

@@ -6,10 +6,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 
-<title>거북섬 헌터호 예약</title>
+<title>거북섬낚시 헌터호 | 시화호 거북섬 체험낚시 예약</title>
 
-<meta name="description" content="거북섬 마리나 헌터호 예약 홈페이지. 선라이즈·선셋·나이트 레저보트 체험과 시즌별 쭈꾸미·갑오징어·장어·꽃게 체험 안내.">
-<meta name="keywords" content="거북섬 헌터호, 헌터호, 거북섬 마리나, 거북섬 체험, 시화호 체험, 헌터호 예약, 거북섬 쭈꾸미, 시화호 쭈꾸미, 갑오징어 체험, 장어 체험">
+<meta name="description" content="거북섬낚시 헌터호 공식 예약 홈페이지. 시흥 거북섬 마리나에서 출발하는 시화호 체험낚시·레저보트. 선라이즈·선셋·나이트 체험과 시즌별 쭈꾸미·갑오징어·장어·꽃게 체험 예약 안내.">
+
+<meta name="keywords" content="거북섬낚시, 거북섬 낚시, 거북섬 체험낚시, 시화호 낚시, 시화호 체험낚시, 시흥 낚시, 시흥 거북섬 낚시, 거북섬 쭈꾸미, 시화호 쭈꾸미, 거북섬 갑오징어, 거북섬 헌터호, 헌터호, 헌터호 예약, 거북섬 마리나">
 
 <style>
 *{box-sizing:border-box}
@@ -147,19 +148,9 @@ border-bottom:1px solid #e8edf2;
 font-size:14px
 }
 
-.publicBookingRow:last-child{
-border-bottom:0
-}
-
-.publicBookingDone{
-font-weight:900;
-color:#13854b
-}
-
-.publicBookingWait{
-font-weight:900;
-color:#c07800
-}
+.publicBookingRow:last-child{border-bottom:0}
+.publicBookingDone{font-weight:900;color:#13854b}
+.publicBookingWait{font-weight:900;color:#c07800}
 
 .submit{
 width:100%;
@@ -220,15 +211,8 @@ font-size:16px;
 color:#333
 }
 
-.refundDanger{
-font-weight:900;
-color:#c53b3b
-}
-
-.refundGood{
-font-weight:900;
-color:#0a578c
-}
+.refundDanger{font-weight:900;color:#c53b3b}
+.refundGood{font-weight:900;color:#0a578c}
 
 .calhead{
 display:flex;
@@ -364,12 +348,12 @@ color:#76664b
 
 <header class="hero">
 
-<img src="/hunter-main.png?v=20260908" alt="헌터호">
+<img src="/hunter-main.png?v=20260908" alt="거북섬 낚시 헌터호 시화호 체험낚시 보트">
 
 <div class="heroText">
-<div>거북섬 마리나 · HUNTER BOAT</div>
-<h1>⚓ 헌터호</h1>
-<p>가까운 바다에서 즐기는 특별한 하루</p>
+<div>시흥 거북섬 마리나 · HUNTER BOAT</div>
+<h1>⚓ 거북섬 헌터호</h1>
+<p>거북섬 낚시 · 시화호 체험낚시<br>가까운 바다에서 즐기는 특별한 하루</p>
 <a class="cta" href="#reserve">예약 가능일 확인하기</a>
 </div>
 
@@ -442,19 +426,13 @@ color:#76664b
 </div>
 
 <div class="week">
-<div>일</div>
-<div>월</div>
-<div>화</div>
-<div>수</div>
-<div>목</div>
-<div>금</div>
-<div>토</div>
+<div>일</div><div>월</div><div>화</div><div>수</div>
+<div>목</div><div>금</div><div>토</div>
 </div>
 
 <div class="calendar" id="calendar"></div>
 
 </div>
-
 
 <h2 class="title">온라인 예약</h2>
 
@@ -486,14 +464,7 @@ color:#76664b
 <input name="name" type="text" required>
 
 <label>휴대전화번호</label>
-<input
-name="phone"
-type="tel"
-inputmode="numeric"
-placeholder="01012345678"
-required
->
-
+<input name="phone" type="tel" inputmode="numeric" placeholder="01012345678" required>
 
 <div class="paymentBox" id="paymentBox">
 
@@ -517,7 +488,6 @@ required
 </div>
 </div>
 
-
 <div class="privacy">
 
 <b>개인정보 수집·이용 안내</b><br>
@@ -528,7 +498,6 @@ required
 
 </div>
 
-
 <label class="agree">
 
 <input type="checkbox" required>
@@ -538,7 +507,6 @@ required
 </span>
 
 </label>
-
 
 <div class="refundBox">
 
@@ -569,14 +537,9 @@ required
 
 </div>
 
-
 <label class="agree" style="margin-top:14px;">
 
-<input
-type="checkbox"
-name="refund_agree"
-required
->
+<input type="checkbox" name="refund_agree" required>
 
 <span>
 <strong>
@@ -586,11 +549,7 @@ required
 
 </label>
 
-
-<button
-class="submit"
-id="submitBtn"
-type="submit">
+<button class="submit" id="submitBtn" type="submit">
 예약 신청하기
 </button>
 
@@ -599,7 +558,6 @@ type="submit">
 </div>
 
 </section>
-
 
 <section id="directions" style="margin-top:32px;">
 
@@ -628,7 +586,6 @@ style="display:block;width:100%;height:auto;border-radius:14px;"
 
 </main>
 
-
 <footer
 style="
 margin-top:40px;
@@ -649,7 +606,6 @@ text-align:center;
 <div>주소 : 경기도 안산시 상록구 구룡로5길 14-4 204호</div>
 
 <div>예약문의 : 010-2003-0359</div>
-
 
 <div
 style="
@@ -708,13 +664,11 @@ color:#666;
 
 </div>
 
-
 <div style="margin-top:15px;">
 © 헌터호. All Rights Reserved.
 </div>
 
 </footer>
-
 
 <nav class="bottom">
 
@@ -722,26 +676,19 @@ color:#666;
 ☎️<br>전화
 </a>
 
-<a
-class="kakao"
-href="http://pf.kakao.com/_rkNSX/chat">
+<a class="kakao" href="http://pf.kakao.com/_rkNSX/chat">
 💬<br>카카오톡
 </a>
 
-<a
-class="band"
-href="https://band.us/n/a1afb9D482Ads">
+<a class="band" href="https://band.us/n/a1afb9D482Ads">
 B<br>밴드
 </a>
 
-<a
-class="reserve"
-href="#reserve">
+<a class="reserve" href="#reserve">
 📅<br>예약
 </a>
 
 </nav>
-
 
 <script>
 
@@ -756,7 +703,6 @@ const programInfo=document.getElementById('programInfo');
 const payAmount=document.getElementById('payAmount');
 const publicBookings=document.getElementById('publicBookings');
 const submitBtn=document.getElementById('submitBtn');
-
 
 const programGuide={
 
@@ -788,7 +734,6 @@ note:'계절별 일몰시간과 기상상황에 따라 운항시간이 달라질
 }
 
 };
-
 
 function updateProgramInfo(){
 
@@ -835,7 +780,6 @@ ${g.season}
 
 }
 
-
 const now=new Date();
 
 let view=new Date(
@@ -844,14 +788,12 @@ now.getMonth(),
 1
 );
 
-
 dateInput.min=
 new Date(
 now.getTime()-now.getTimezoneOffset()*60000
 )
 .toISOString()
 .split('T')[0];
-
 
 function mk(d){
 
@@ -860,7 +802,6 @@ return d.getFullYear()
 +String(d.getMonth()+1).padStart(2,'0');
 
 }
-
 
 async function loadPublicBookings(){
 
@@ -927,7 +868,6 @@ publicBookings.innerHTML='';
 
 }
 
-
 async function availability(){
 
 hidden.value=program.value;
@@ -989,7 +929,6 @@ loadPublicBookings();
 
 }
 
-
 async function load(){
 
 hidden.value=program.value;
@@ -1020,7 +959,6 @@ for(let i=0;i<first;i++){
 h+='<div class="day blank"></div>';
 
 }
-
 
 for(const x of d.days){
 
@@ -1062,13 +1000,11 @@ txt=x.state;
 
 }
 
-
 if(dateInput.value===x.date){
 
 cls+=' selected';
 
 }
-
 
 h+=`
 <div class="${cls}" ${click}>
@@ -1082,7 +1018,6 @@ h+=`
 cal.innerHTML=h;
 
 }
-
 
 function pick(v){
 
@@ -1098,7 +1033,6 @@ document
 
 }
 
-
 document.getElementById('prev').onclick=()=>{
 
 view=new Date(
@@ -1111,7 +1045,6 @@ load();
 
 };
 
-
 document.getElementById('next').onclick=()=>{
 
 view=new Date(
@@ -1123,7 +1056,6 @@ view.getMonth()+1,
 load();
 
 };
-
 
 program.onchange=()=>{
 
@@ -1147,7 +1079,6 @@ updatePay();
 
 };
 
-
 dateInput.onchange=()=>{
 
 availability();
@@ -1167,7 +1098,6 @@ load();
 }
 
 };
-
 
 function updatePay(){
 
@@ -1191,23 +1121,19 @@ total.toLocaleString()+'원';
 
 }
 
-
 people.addEventListener(
 'input',
 updatePay
 );
 
-
 updateProgramInfo();
 updatePay();
 load();
-
 
 const reserveForm=
 document.getElementById('reserveForm');
 
 let submitting=false;
-
 
 reserveForm.addEventListener(
 'submit',

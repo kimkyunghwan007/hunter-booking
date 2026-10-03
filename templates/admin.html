@@ -22,8 +22,6 @@ textarea{min-height:82px;resize:vertical}
 .actions .paid{background:#16734a}.actions .muted{background:#e7ecf1;color:#172332}
 .status{display:inline-block;margin-top:7px;padding:5px 9px;border-radius:999px;background:#eaf5ef;color:#147044;font-size:12px;font-weight:800}
 .pay{margin-top:9px;padding:10px;background:#fff8e8;border-radius:9px;font-size:13px;line-height:1.55}
-.manifestState{margin-top:9px;padding:10px;background:#eef7fb;border-radius:9px;font-size:13px;font-weight:900;line-height:1.5}
-.manifestState a{display:inline-block;margin-top:6px;color:#0b5f93;text-decoration:none}
 .noteBox{margin-top:10px;padding:11px;background:#f6f8fb;border:1px solid #e1e7ee;border-radius:11px}
 .noteBox label{margin-top:0}
 .noteBtn{width:100%;margin-top:8px;border:0;border-radius:9px;padding:10px;background:#5b6470;color:#fff;font-weight:900}
@@ -106,6 +104,19 @@ textarea{min-height:82px;resize:vertical}
 </section>
 
 <section>
+<h2>기간 일괄 운항 설정</h2>
+<form method="post" action="/admin/schedule/bulk" class="card" onsubmit="return confirmBulkSchedule(this)">
+<div class="hint">예: 10월 1일~31일을 한 번에 운항없음 처리할 수 있습니다.</div>
+<label>체험</label>
+<select name="program" required><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
+<label>시작일</label><input type="date" name="start_date" id="bulkStartDate" required>
+<label>종료일</label><input type="date" name="end_date" id="bulkEndDate" required>
+<label>상태</label><select name="state" required><option>운항없음</option><option>예약가능</option><option>예약마감</option></select>
+<button class="gold" type="submit">기간 전체 일괄 적용</button>
+</form>
+</section>
+
+<section>
 <h2>날짜별 운항 설정</h2>
 <form method="post" action="/admin/schedule" class="card">
 <label>체험</label><select name="program" id="scheduleProgram"><option>주간체험</option><option>야간체험</option><option>선셋체험</option></select>
@@ -129,12 +140,6 @@ textarea{min-height:82px;resize:vertical}
 <b>결제:</b> {{b.payment_type or '기존 예약'}}
 {% if b.payment_amount %} · {{'{:,}'.format(b.payment_amount)}}원{% endif %}
 {% if b.total_amount %}<br><b>총 이용금액:</b> {{'{:,}'.format(b.total_amount)}}원{% endif %}
-</div>
-
-<div class="manifestState">
-📋 승선명부 {{passenger_counts.get(b.id, 0)}} / {{b.people}}명
-{% if passenger_counts.get(b.id, 0) == b.people %} · ✅ 작성완료{% endif %}
-<br><a href="/passenger?booking_id={{b.id}}" target="_blank">이 예약 승선명부 작성/수정</a>
 </div>
 <div class="noteBox">
 <form method="post" action="/admin/booking/{{b.id}}/note">
@@ -175,6 +180,10 @@ let view=new Date(now.getFullYear(),now.getMonth(),1);
 let selectedDate='';
 function ymd(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
 function toggleManual(open){const box=document.getElementById('manualBooking');box.classList.toggle('open',open);if(open)box.scrollIntoView({behavior:'smooth',block:'start'});}
+function confirmBulkSchedule(form){
+  const p=form.program.value,s=form.start_date.value,e=form.end_date.value,st=form.state.value;
+  return confirm(`${s} ~ ${e}\n${p}을(를) '${st}' 상태로 한 번에 적용할까요?`);
+}
 function programLine(dt,program,cssClass){
   const key=dt+'|'+program;const reserved=Number(reservedCounts[key]||0);const custom=scheduleInfo[key]||null;
   const capacity=custom?Number(custom.capacity):Number(programs[program].capacity);const state=custom?custom.state:'예약가능';
@@ -201,6 +210,9 @@ const scheduleProgram=document.getElementById('scheduleProgram');const scheduleC
 function setDefaultCapacity(){if(scheduleProgram.value==='주간체험')scheduleCapacity.value=8;else if(scheduleProgram.value==='야간체험')scheduleCapacity.value=6;else if(scheduleProgram.value==='선셋체험')scheduleCapacity.value=4;}
 scheduleProgram.addEventListener('change',setDefaultCapacity);setDefaultCapacity();
 const todayString=ymd(now.getFullYear(),now.getMonth(),now.getDate());const manualDate=document.getElementById('manualDate');if(manualDate&&!manualDate.value)manualDate.value=todayString;
+const bulkStartDate=document.getElementById('bulkStartDate'),bulkEndDate=document.getElementById('bulkEndDate');
+if(bulkStartDate&&!bulkStartDate.value)bulkStartDate.value=todayString;
+if(bulkEndDate&&!bulkEndDate.value)bulkEndDate.value=todayString;
 if(location.hash==='#manualBooking')toggleManual(true);
 drawCalendar();
 </script>

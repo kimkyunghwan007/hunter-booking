@@ -1824,6 +1824,67 @@ def booking_note(bid):
 
 
 # ==================================================
+# 운항 일정 일괄 설정
+# ==================================================
+
+@app.route("/admin/schedule/bulk", methods=["POST"])
+def admin_schedule_bulk():
+    if not session.get("admin"):
+        return redirect(url_for("admin_login"))
+
+    program = request.form.get("program", "").strip()
+    start_date = request.form.get("start_date", "").strip()
+    end_date = request.form.get("end_date", "").strip()
+    state = request.form.get("state", "").strip()
+
+    if program not in PROGRAMS or state not in ("예약가능", "예약마감", "운항없음") or not start_date or not end_date:
+        flash("일괄 운항 정보를 확인해주세요.")
+        return redirect(url_for("admin"))
+
+    try:
+        start = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end = datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        flash("날짜를 다시 확인해주세요.")
+        return redirect(url_for("admin"))
+
+    if end < start:
+        flash("종료일은 시작일보다 빠를 수 없습니다.")
+        return redirect(url_for("admin"))
+
+    if (end - start).days > 366:
+        flash("일괄 설정은 최대 1년까지 가능합니다.")
+        return redirect(url_for("admin"))
+
+    capacity = int(PROGRAMS[program]["capacity"])
+    con = db()
+    try:
+        current = start
+        count = 0
+        while current <= end:
+            dt = current.isoformat()
+            con.execute("""
+                INSERT INTO schedule(program, date, capacity, state)
+                VALUES(%s,%s,%s,%s)
+                ON CONFLICT(program,date)
+                DO UPDATE SET capacity = EXCLUDED.capacity, state = EXCLUDED.state
+            """, (program, dt, capacity, state))
+            count += 1
+            current = current.fromordinal(current.toordinal() + 1)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("일괄 운항 설정 실패:", e)
+        flash("일괄 운항 설정 중 오류가 발생했습니다.")
+        return redirect(url_for("admin"))
+    finally:
+        con.close()
+
+    flash(f"{start_date} ~ {end_date} / {program} / {state}로 {count}일 일괄 적용했습니다.")
+    return redirect(url_for("admin"))
+
+
+# ==================================================
 # 운항 일정 설정
 # ==================================================
 

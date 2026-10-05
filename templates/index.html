@@ -8,7 +8,7 @@
 
 <title>거북섬낚시 헌터호 | 시화호 거북섬 체험낚시 예약</title>
 
-<meta name="description" content="거북섬낚시 헌터호 공식 예약 홈페이지. 시흥 거북섬 마리나에서 출발하는 시화호 체험낚시·레저보트. 선라이즈·선셋·나이트 체험과 30분 보트체험, 야간 선셋체험, 시즌별 쭈꾸미·갑오징어·장어·꽃게 체험 예약 안내.">
+<meta name="description" content="거북섬낚시 헌터호 공식 예약 홈페이지. 시흥 거북섬 마리나에서 출발하는 시화호 체험낚시·레저보트. 선라이즈·선셋·나이트 체험과 30분 보트체험, 시즌별 쭈꾸미·갑오징어·장어·꽃게 체험 예약 안내.">
 
 <meta name="keywords" content="거북섬낚시, 거북섬 낚시, 거북섬 체험낚시, 시화호 낚시, 시화호 체험낚시, 시흥 낚시, 시흥 거북섬 낚시, 거북섬 보트체험, 시화호 보트체험, 거북섬 선셋, 거북섬 쭈꾸미, 시화호 쭈꾸미, 거북섬 갑오징어, 거북섬 헌터호, 헌터호, 헌터호 예약, 거북섬 마리나">
 
@@ -456,21 +456,6 @@ color:#76664b
 </div>
 </div>
 
-<div class="card program inquiryProgram">
-<div>
-<h3>🌃 야간 선셋체험</h3>
-<p>
-시화호 노을과 거북섬 마리나 야경을 즐기는 보트체험<br>
-<small>금 · 토 · 일 운영</small>
-</p>
-<span class="inquiryTag">예약 전 전화문의 필수</span>
-</div>
-<div class="price">
-120,000원
-<small>4인 기준</small>
-</div>
-</div>
-
 <div class="quick">
 <a class="kakao" href="http://pf.kakao.com/_rkNSX/chat">💬 카카오톡 문의</a>
 <a class="band" href="https://band.us/n/a1afb9D482Ads">B 네이버 밴드</a>
@@ -511,9 +496,6 @@ color:#76664b
 </select>
 
 <div id="programInfo" class="infoBox"></div>
-
-
-<!-- 30분 체험 전용 안내 -->
 
 <div
 id="experience30Box"
@@ -567,8 +549,6 @@ href="tel:01020030359">
 </div>
 
 
-<!-- 기존 예약 달력 -->
-
 <div id="calendarArea">
 
 <div class="calhead">
@@ -588,8 +568,6 @@ href="tel:01020030359">
 
 </div>
 
-
-<!-- 기존 온라인 예약 -->
 
 <div id="onlineReserveArea">
 
@@ -869,15 +847,9 @@ const payAmount=document.getElementById('payAmount');
 const publicBookings=document.getElementById('publicBookings');
 const submitBtn=document.getElementById('submitBtn');
 
-const calendarArea=
-document.getElementById('calendarArea');
-
-const onlineReserveArea=
-document.getElementById('onlineReserveArea');
-
-const experience30Box=
-document.getElementById('experience30Box');
-
+const calendarArea=document.getElementById('calendarArea');
+const onlineReserveArea=document.getElementById('onlineReserveArea');
+const experience30Box=document.getElementById('experience30Box');
 
 const programGuide={
 
@@ -909,7 +881,6 @@ note:'계절별 일몰시간과 기상상황에 따라 운항시간이 달라질
 }
 
 };
-
 
 function updateProgramInfo(){
 
@@ -964,7 +935,6 @@ ${g.season}
 
 }
 
-
 const now=new Date();
 
 let view=new Date(
@@ -980,7 +950,6 @@ now.getTime()-now.getTimezoneOffset()*60000
 .toISOString()
 .split('T')[0];
 
-
 function mk(d){
 
 return d.getFullYear()
@@ -988,7 +957,6 @@ return d.getFullYear()
 +String(d.getMonth()+1).padStart(2,'0');
 
 }
-
 
 async function loadPublicBookings(){
 
@@ -1059,7 +1027,6 @@ publicBookings.innerHTML='';
 
 }
 
-
 async function availability(){
 
 if(program.value==='30분체험'){
@@ -1128,7 +1095,6 @@ submitBtn.textContent=d.state;
 loadPublicBookings();
 
 }
-
 
 async function load(){
 
@@ -1224,7 +1190,6 @@ cal.innerHTML=h;
 
 }
 
-
 function pick(v){
 
 if(program.value==='30분체험'){
@@ -1243,7 +1208,6 @@ document
 
 }
 
-
 document.getElementById('prev').onclick=()=>{
 
 if(program.value==='30분체험'){
@@ -1259,7 +1223,6 @@ view.getMonth()-1,
 load();
 
 };
-
 
 document.getElementById('next').onclick=()=>{
 
@@ -1277,7 +1240,6 @@ load();
 
 };
 
-
 program.onchange=()=>{
 
 dateInput.value='';
@@ -1291,11 +1253,8 @@ publicBookings.innerHTML='';
 if(program.value==='30분체험'){
 
 programInfo.style.display='none';
-
 calendarArea.style.display='none';
-
 onlineReserveArea.style.display='none';
-
 experience30Box.style.display='block';
 
 return;
@@ -1303,27 +1262,19 @@ return;
 }
 
 programInfo.style.display='block';
-
 calendarArea.style.display='block';
-
 onlineReserveArea.style.display='block';
-
 experience30Box.style.display='none';
 
 people.disabled=false;
-
 submitBtn.disabled=false;
-
 submitBtn.textContent='예약 신청하기';
 
 updateProgramInfo();
-
 load();
-
 updatePay();
 
 };
-
 
 dateInput.onchange=()=>{
 
@@ -1344,7 +1295,6 @@ load();
 }
 
 };
-
 
 function updatePay(){
 
@@ -1372,17 +1322,14 @@ total.toLocaleString()+'원';
 
 }
 
-
 people.addEventListener(
 'input',
 updatePay
 );
 
-
 updateProgramInfo();
 updatePay();
 load();
-
 
 const reserveForm=
 document.getElementById('reserveForm');

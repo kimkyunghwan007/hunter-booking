@@ -316,6 +316,36 @@ color:#6b7785;
 margin-top:9px
 }
 
+.experience30Box{
+margin-top:14px;
+padding:18px;
+background:#fff8e8;
+border:1px solid #f1d48d;
+border-radius:14px;
+}
+
+.experience30Box h3{
+margin:0 0 10px;
+font-size:20px
+}
+
+.experience30Box p{
+margin:7px 0;
+line-height:1.7
+}
+
+.call30{
+display:block;
+margin-top:16px;
+padding:17px;
+background:#0a3c62;
+color:white;
+text-align:center;
+border-radius:13px;
+font-size:17px;
+font-weight:900
+}
+
 .bottom{
 position:fixed;
 bottom:0;
@@ -416,13 +446,13 @@ color:#76664b
 <h3>🚤 30분 보트체험</h3>
 <p>
 거북섬·시화호를 가볍게 즐기는 레저보트 체험<br>
-<small>금 · 토 · 일 운영</small>
+<small>금 · 토 · 일 · 오후 4시 이후</small>
 </p>
-<span class="inquiryTag">예약 전 전화문의 필수</span>
+<span class="inquiryTag">전화예약 필수 · 최소 2인</span>
 </div>
 <div class="price">
 20,000원
-<small>1인 기준</small>
+<small>1인 · 최대 6인</small>
 </div>
 </div>
 
@@ -457,12 +487,89 @@ color:#76664b
 <label>체험 선택</label>
 
 <select id="program">
+
 {% for name, info in programs.items() %}
-<option value="{{ name }}">{% if name == '주간체험' %}선라이즈 체험{% elif name == '야간체험' %}나이트 체험{% elif name == '선셋체험' %}선셋 체험{% else %}{{ name }}{% endif %}</option>
+
+<option value="{{ name }}">
+{% if name == '주간체험' %}
+선라이즈 체험
+{% elif name == '야간체험' %}
+나이트 체험
+{% elif name == '선셋체험' %}
+선셋 체험
+{% else %}
+{{ name }}
+{% endif %}
+</option>
+
 {% endfor %}
+
+<option value="30분체험">
+30분 보트체험
+</option>
+
 </select>
 
 <div id="programInfo" class="infoBox"></div>
+
+
+<!-- 30분 체험 전용 안내 -->
+
+<div
+id="experience30Box"
+class="experience30Box"
+style="display:none;">
+
+<h3>🚤 30분 보트체험</h3>
+
+<p>
+<strong>📅 운영일</strong><br>
+금 · 토 · 일
+</p>
+
+<p>
+<strong>⏰ 운영시간</strong><br>
+오후 4시 이후
+</p>
+
+<p>
+<strong>💰 이용요금</strong><br>
+1인 20,000원
+</p>
+
+<p>
+<strong>👥 이용인원</strong><br>
+최소 2인 · 최대 6인
+</p>
+
+<p>
+<strong>🚤 체험시간</strong><br>
+약 30분
+</p>
+
+<p>
+<strong>📸 서비스</strong><br>
+즉석사진 촬영
+</p>
+
+<div class="infoNote">
+※ 온라인 예약 없이 전화예약으로 진행합니다.<br>
+※ 정확한 출항시간은 전화로 조율합니다.<br>
+※ 기상 및 현장 상황에 따라 운항시간이 변경될 수 있습니다.
+</div>
+
+<a
+class="call30"
+href="tel:01020030359">
+☎️ 010-2003-0359 전화예약
+</a>
+
+</div>
+
+
+<!-- 기존 예약 달력 -->
+
+<div id="calendarArea">
 
 <div class="calhead">
 <button type="button" id="prev">‹</button>
@@ -478,6 +585,13 @@ color:#76664b
 <div class="calendar" id="calendar"></div>
 
 </div>
+
+</div>
+
+
+<!-- 기존 온라인 예약 -->
+
+<div id="onlineReserveArea">
 
 <h2 class="title">온라인 예약</h2>
 
@@ -602,7 +716,10 @@ color:#76664b
 
 </div>
 
+</div>
+
 </section>
+
 
 <section id="directions" style="margin-top:32px;">
 
@@ -630,6 +747,7 @@ style="display:block;width:100%;height:auto;border-radius:14px;"
 </section>
 
 </main>
+
 
 <footer
 style="
@@ -715,6 +833,7 @@ color:#666;
 
 </footer>
 
+
 <nav class="bottom">
 
 <a href="tel:01020030359">
@@ -735,6 +854,7 @@ B<br>밴드
 
 </nav>
 
+
 <script>
 
 const program=document.getElementById('program');
@@ -748,6 +868,16 @@ const programInfo=document.getElementById('programInfo');
 const payAmount=document.getElementById('payAmount');
 const publicBookings=document.getElementById('publicBookings');
 const submitBtn=document.getElementById('submitBtn');
+
+const calendarArea=
+document.getElementById('calendarArea');
+
+const onlineReserveArea=
+document.getElementById('onlineReserveArea');
+
+const experience30Box=
+document.getElementById('experience30Box');
+
 
 const programGuide={
 
@@ -780,9 +910,18 @@ note:'계절별 일몰시간과 기상상황에 따라 운항시간이 달라질
 
 };
 
+
 function updateProgramInfo(){
 
+if(program.value==='30분체험'){
+return;
+}
+
 const g=programGuide[program.value];
+
+if(!g){
+return;
+}
 
 programInfo.innerHTML=`
 
@@ -825,6 +964,7 @@ ${g.season}
 
 }
 
+
 const now=new Date();
 
 let view=new Date(
@@ -840,6 +980,7 @@ now.getTime()-now.getTimezoneOffset()*60000
 .toISOString()
 .split('T')[0];
 
+
 function mk(d){
 
 return d.getFullYear()
@@ -848,7 +989,12 @@ return d.getFullYear()
 
 }
 
+
 async function loadPublicBookings(){
+
+if(program.value==='30분체험'){
+return;
+}
 
 if(!dateInput.value){
 
@@ -913,7 +1059,12 @@ publicBookings.innerHTML='';
 
 }
 
+
 async function availability(){
+
+if(program.value==='30분체험'){
+return;
+}
 
 hidden.value=program.value;
 
@@ -959,13 +1110,17 @@ remaining.textContent='⛔ '+d.state;
 people.max=1;
 
 if(d.state==='예약마감'){
+
 people.disabled=true;
 submitBtn.disabled=true;
 submitBtn.textContent='예약 마감';
+
 }else{
+
 people.disabled=false;
 submitBtn.disabled=true;
 submitBtn.textContent=d.state;
+
 }
 
 }
@@ -974,7 +1129,12 @@ loadPublicBookings();
 
 }
 
+
 async function load(){
+
+if(program.value==='30분체험'){
+return;
+}
 
 hidden.value=program.value;
 
@@ -1064,7 +1224,12 @@ cal.innerHTML=h;
 
 }
 
+
 function pick(v){
+
+if(program.value==='30분체험'){
+return;
+}
 
 dateInput.value=v;
 
@@ -1078,7 +1243,12 @@ document
 
 }
 
+
 document.getElementById('prev').onclick=()=>{
+
+if(program.value==='30분체험'){
+return;
+}
 
 view=new Date(
 view.getFullYear(),
@@ -1090,7 +1260,12 @@ load();
 
 };
 
+
 document.getElementById('next').onclick=()=>{
+
+if(program.value==='30분체험'){
+return;
+}
 
 view=new Date(
 view.getFullYear(),
@@ -1102,6 +1277,7 @@ load();
 
 };
 
+
 program.onchange=()=>{
 
 dateInput.value='';
@@ -1112,8 +1288,32 @@ remaining.textContent=
 publicBookings.style.display='none';
 publicBookings.innerHTML='';
 
+if(program.value==='30분체험'){
+
+programInfo.style.display='none';
+
+calendarArea.style.display='none';
+
+onlineReserveArea.style.display='none';
+
+experience30Box.style.display='block';
+
+return;
+
+}
+
+programInfo.style.display='block';
+
+calendarArea.style.display='block';
+
+onlineReserveArea.style.display='block';
+
+experience30Box.style.display='none';
+
 people.disabled=false;
+
 submitBtn.disabled=false;
+
 submitBtn.textContent='예약 신청하기';
 
 updateProgramInfo();
@@ -1123,6 +1323,7 @@ load();
 updatePay();
 
 };
+
 
 dateInput.onchange=()=>{
 
@@ -1144,6 +1345,7 @@ load();
 
 };
 
+
 function updatePay(){
 
 const prices={
@@ -1151,6 +1353,10 @@ const prices={
 '야간체험':80000,
 '선셋체험':250000
 };
+
+if(program.value==='30분체험'){
+return;
+}
 
 let total=
 program.value==='선셋체험'
@@ -1166,14 +1372,17 @@ total.toLocaleString()+'원';
 
 }
 
+
 people.addEventListener(
 'input',
 updatePay
 );
 
+
 updateProgramInfo();
 updatePay();
 load();
+
 
 const reserveForm=
 document.getElementById('reserveForm');
@@ -1184,15 +1393,23 @@ reserveForm.addEventListener(
 'submit',
 function(e){
 
-if(submitBtn.disabled){
+if(program.value==='30분체험'){
+
 e.preventDefault();
 return false;
+
+}
+
+if(submitBtn.disabled){
+
+e.preventDefault();
+return false;
+
 }
 
 if(submitting){
 
 e.preventDefault();
-
 return false;
 
 }

@@ -25,6 +25,9 @@ input[readonly]{background:#171b20;color:#d8e0e8}
 .submit{width:100%;border:0;background:#d9a936;color:#101010;padding:16px;border-radius:13px;font-size:17px;font-weight:900}
 .submit:disabled{opacity:.55}.small{font-size:13px;color:#aeb7c2;margin-top:8px}
 .countGuide{text-align:center;background:#222a32;padding:11px;border-radius:11px;margin:10px 0;font-weight:900}
+.saveBox{background:#15253a;border:1px solid #416286;border-radius:15px;padding:15px;margin:14px 0}
+.saveBtn{border:1px solid #8ba9c9;background:#25446a;color:white;border-radius:10px;padding:11px 13px;font-weight:800;font-size:15px;margin:8px 6px 4px 0}
+.saveBtn.danger{background:#4a2427;border-color:#96575a}
 </style>
 </head>
 <body>
@@ -61,10 +64,19 @@ input[readonly]{background:#171b20;color:#d8e0e8}
 </div>
 
 <div class="card">
+<div class="saveBox">
+<strong>🔁 재방문 고객 빠른 작성</strong>
+<div class="small">본인 휴대폰에 저장한 승선자 정보를 다시 불러올 수 있어요. 문자 인증이나 문자 발송은 없습니다.</div>
+<button class="saveBtn" type="button" id="loadSaved">저장된 정보 불러오기</button>
+<button class="saveBtn danger" type="button" id="clearSaved">저장정보 삭제</button>
+<div class="small" id="saveStatus">저장정보는 이 휴대폰의 현재 브라우저에만 보관됩니다. 공용 기기에서는 사용하지 마세요.</div>
+</div>
 {% if booking %}<div class="countGuide">예약 인원 {{booking.people}}명 전원을 입력해주세요.</div>{% endif %}
 <div id="people"></div>
 {% if not booking %}<button class="add" type="button" onclick="addPerson()">＋ 승선자 추가</button>{% endif %}
 <div class="notice">입력 정보는 승선자 확인, 안전 운항 및 비상상황 대응을 위해 사용합니다. 승선 전 구명조끼 착용 및 선내 안전수칙을 확인하고 선장의 안전지시에 따라주세요.</div>
+<label class="agree"><input type="checkbox" id="saveLocally"><span>다음 방문을 위해 이 휴대폰에 승선자 정보를 저장합니다. (선택)</span></label>
+<div class="small">이름, 생년월일, 연락처, 비상연락처가 브라우저에 저장됩니다. 휴대폰을 다른 사람이 사용하면 정보가 노출될 수 있습니다. 언제든 위의 '저장정보 삭제'로 지울 수 있습니다.</div>
 <label class="agree"><input type="checkbox" name="agree" value="yes" required><span>승선자 전원의 정보를 정확히 입력했으며 개인정보 수집·이용 및 안전수칙에 동의합니다.</span></label>
 <button class="submit" id="submitBtn" type="submit">승선명부 저장하기</button>
 </div>
@@ -74,10 +86,10 @@ input[readonly]{background:#171b20;color:#d8e0e8}
 <template id="personTemplate">
 <div class="person">
 <div class="personHead"><div class="personTitle"></div><button class="remove" type="button" onclick="removePerson(this)">삭제</button></div>
-<label>성명</label><input name="name[]" required>
-<label>생년월일</label><input name="birth_date[]" inputmode="numeric" maxlength="8" placeholder="예: 19800101" required>
-<label>연락처</label><input name="phone[]" inputmode="tel" placeholder="01012345678" required>
-<label>비상연락처</label><input name="emergency_phone[]" inputmode="tel" placeholder="01012345678" required>
+<label>성명</label><input name="name[]" required autocomplete="off">
+<label>생년월일</label><input name="birth_date[]" inputmode="numeric" maxlength="8" placeholder="예: 19800101" required autocomplete="off">
+<label>연락처</label><input name="phone[]" inputmode="tel" placeholder="01012345678" required autocomplete="off">
+<label>비상연락처</label><input name="emergency_phone[]" inputmode="tel" placeholder="01012345678" required autocomplete="off">
 </div>
 </template>
 
@@ -85,19 +97,72 @@ input[readonly]{background:#171b20;color:#d8e0e8}
 const people=document.getElementById('people');
 const tpl=document.getElementById('personTemplate');
 const expectedCount={{ booking.people if booking else 1 }};
+const isBooking={{ 'true' if booking else 'false' }};
+const storageKey='hunter_passenger_saved_v1';
 
 function renumber(){
   [...people.querySelectorAll('.person')].forEach((el,i)=>{
     el.querySelector('.personTitle').textContent=(i+1)+'번 승선자';
     const remove=el.querySelector('.remove');
-    {% if booking %}remove.style.display='none';{% else %}remove.style.display=people.children.length===1?'none':'block';{% endif %}
+    remove.style.display=isBooking?'none':people.children.length===1?'none':'block';
   });
 }
 function addPerson(){people.appendChild(tpl.content.cloneNode(true));renumber();}
 function removePerson(btn){if(people.children.length<=1)return;btn.closest('.person').remove();renumber();}
 for(let i=0;i<expectedCount;i++) addPerson();
 
+function getPersonRows(){
+  return [...people.querySelectorAll('.person')].map(el=>({
+    name:el.querySelector('[name="name[]"]').value.trim(),
+    birth_date:el.querySelector('[name="birth_date[]"]').value.trim(),
+    phone:el.querySelector('[name="phone[]"]').value.trim(),
+    emergency_phone:el.querySelector('[name="emergency_phone[]"]').value.trim()
+  }));
+}
+function loadPeople(rows){
+  if(!Array.isArray(rows)||!rows.length)return;
+  if(isBooking && rows.length!==expectedCount){
+    alert('저장된 인원('+rows.length+'명)과 이번 예약 인원('+expectedCount+'명)이 다릅니다. 필요한 인원만 직접 입력하거나 수정해주세요.');
+    return;
+  }
+  people.replaceChildren();
+  const count=isBooking?expectedCount:rows.length;
+  for(let i=0;i<count;i++){
+    addPerson();
+    const el=people.children[i];
+    const row=rows[i]||{};
+    ['name','birth_date','phone','emergency_phone'].forEach(k=>{
+      const field=el.querySelector('[name="'+k+'[]"]');
+      field.value=typeof row[k]==='string'?row[k]:'';
+    });
+  }
+  renumber();
+}
+document.getElementById('loadSaved').addEventListener('click',()=>{
+  try{
+    const raw=localStorage.getItem(storageKey);
+    if(!raw){alert('이 브라우저에 저장된 승선자 정보가 없습니다.');return;}
+    const saved=JSON.parse(raw);
+    if(!saved||!Array.isArray(saved.people)||!saved.people.length)throw Error('invalid');
+    if(!confirm('저장된 승선자 '+saved.people.length+'명의 정보를 현재 입력란에 불러올까요?'))return;
+    loadPeople(saved.people);
+  }catch(e){alert('저장정보를 불러올 수 없습니다.');}
+});
+document.getElementById('clearSaved').addEventListener('click',()=>{
+  if(confirm('이 브라우저에 저장된 승선자 정보를 삭제할까요?')){
+    localStorage.removeItem(storageKey);
+    document.getElementById('saveLocally').checked=false;
+    alert('저장정보를 삭제했습니다.');
+  }
+});
 document.getElementById('passengerForm').addEventListener('submit',()=>{
+  if(document.getElementById('saveLocally').checked){
+    try{
+      localStorage.setItem(storageKey,JSON.stringify({people:getPersonRows(),savedAt:new Date().toISOString()}));
+    }catch(e){alert('휴대폰에 정보를 저장하지 못했습니다. 승선명부는 계속 제출됩니다.');}
+  }else{
+    // 선택하지 않은 경우 기존에 저장된 정보는 유지합니다.
+  }
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;
   btn.textContent='저장 중...';
